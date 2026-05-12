@@ -8,7 +8,7 @@ import { Navbar } from "@/components/navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Zap } from "lucide-react";
+import { LogoMark } from "@/components/logo";
 
 const roleRedirects: Record<string, string> = {
   DRIVER: "/dashboard/driver",
@@ -48,8 +48,8 @@ export default function LoginPage() {
       <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4">
         <Card className="w-full max-w-md">
           <div className="mb-6 text-center">
-            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-600 shadow-lg shadow-brand-600/25">
-              <Zap className="h-7 w-7 text-white" />
+            <div className="mx-auto mb-4">
+              <LogoMark size={56} />
             </div>
             <h1 className="text-2xl font-bold text-white">Welcome back</h1>
             <p className="mt-1 text-sm text-gray-400">Sign in to your digital identity</p>

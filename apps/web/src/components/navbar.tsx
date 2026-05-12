@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
-import { Zap, User, Car, Building2, LogOut } from "lucide-react";
+import { Logo } from "@/components/logo";
+import { User, Car, Building2, LogOut, Play } from "lucide-react";
 
 const roleRoutes: Record<string, { href: string; label: string; icon: React.ReactNode }> = {
   DRIVER: { href: "/dashboard/driver", label: "My Identity", icon: <User className="w-4 h-4" /> },
@@ -28,15 +29,16 @@ export function Navbar() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 shadow-lg shadow-brand-600/25">
-              <Zap className="h-5 w-5 text-white" />
-            </div>
-            <span className="text-lg font-bold text-white tracking-tight">
-              Futuristic
-            </span>
+            <Logo size="sm" />
           </Link>
 
           <div className="flex items-center gap-4">
+            <Link href="/demo">
+              <Button variant="ghost" size="sm" className="gap-2 text-sky-400 hover:text-sky-300">
+                <Play className="w-4 h-4" />
+                Try Demo
+              </Button>
+            </Link>
             {user ? (
               <>
                 {roleLink && (
