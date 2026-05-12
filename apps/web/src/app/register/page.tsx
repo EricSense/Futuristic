@@ -83,7 +83,7 @@ export default function RegisterPage() {
             </div>
             <h1 className="text-2xl font-bold text-white">Create your identity</h1>
             <p className="mt-1 text-sm text-gray-400">
-              {step === 1 ? "Choose how you'll use Futuristic" : "Set up your account"}
+              {step === 1 ? "Join the future of person-centric mobility" : "Set up your account"}
             </p>
           </div>
 

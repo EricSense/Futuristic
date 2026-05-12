@@ -52,7 +52,7 @@ export default function LoginPage() {
               <LogoMark size={56} />
             </div>
             <h1 className="text-2xl font-bold text-white">Welcome back</h1>
-            <p className="mt-1 text-sm text-gray-400">Sign in to your digital identity</p>
+            <p className="mt-1 text-sm text-gray-400">Sign in to your Digital Driving Identity</p>
           </div>
 
           {error && (

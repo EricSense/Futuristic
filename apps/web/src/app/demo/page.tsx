@@ -220,11 +220,11 @@ export default function DemoPage() {
             <LogoMark size={48} />
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
-            Interactive Demo
+            See the Identity Sync Engine
           </h1>
           <p className="text-gray-400 max-w-xl mx-auto">
-            Experience how a driver&apos;s digital identity syncs to any vehicle.
-            No account required -- this runs entirely in your browser.
+            Watch a Digital Driving Identity sync to any connected vehicle in real time.
+            This is what person-centric mobility looks like. No account required.
           </p>
         </div>
 
@@ -479,7 +479,8 @@ export default function DemoPage() {
             {/* CTA */}
             <div className="mt-8 text-center">
               <p className="text-gray-400 mb-4">
-                This is what Futuristic does. Your identity, any vehicle, instant adaptation.
+                This is person-centric mobility. One identity. Any vehicle. Instant adaptation.
+                The car doesn&apos;t define you -- your Digital Driving Identity defines the car.
               </p>
               <div className="flex justify-center gap-4">
                 <Link href="/register">
