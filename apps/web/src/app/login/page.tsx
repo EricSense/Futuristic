@@ -52,7 +52,7 @@ export default function LoginPage() {
               <LogoMark size={56} />
             </div>
             <h1 className="text-2xl font-bold text-white">Welcome back</h1>
-            <p className="mt-1 text-sm text-gray-400">Sign in to your Digital Driving Identity</p>
+            <p className="mt-1 text-sm text-gray-400">Access your DDI &mdash; Digital Driving Identity</p>
           </div>
 
           {error && (
@@ -87,8 +87,8 @@ export default function LoginPage() {
 
           <p className="mt-6 text-center text-sm text-gray-400">
             Don&apos;t have an account?{" "}
-            <Link href="/register" className="text-brand-400 hover:text-brand-300 font-medium">
-              Get started
+            <Link href="/register" className="text-sky-400 hover:text-sky-300 font-medium">
+              Create your DDI
             </Link>
           </p>
         </Card>

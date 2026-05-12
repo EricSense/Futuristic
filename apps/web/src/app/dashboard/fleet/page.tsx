@@ -156,7 +156,7 @@ export default function FleetDashboard() {
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-white">Fleet Management</h1>
-            <p className="text-gray-400 mt-1">Manage vehicle fleets and track driver sync sessions</p>
+            <p className="text-gray-400 mt-1">Enable DDI across your fleet &mdash; every driver, every vehicle, instantly personalized</p>
           </div>
           <Button onClick={() => setShowAddForm(!showAddForm)} className="gap-2">
             {showAddForm ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}

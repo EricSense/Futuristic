@@ -19,7 +19,7 @@ import {
   Accessibility,
   Eye,
   Save,
-  Zap,
+  Fingerprint,
   History,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -108,7 +108,7 @@ export default function DriverDashboard() {
       if (res.data) {
         setProfile(res.data.profile);
         setCompleteness(res.data.completeness);
-        setSaveMsg("Profile saved!");
+        setSaveMsg("DDI saved!");
         setTimeout(() => setSaveMsg(""), 3000);
       }
     } catch (err) {
@@ -123,7 +123,7 @@ export default function DriverDashboard() {
       <div className="min-h-screen bg-surface">
         <Navbar />
         <div className="flex items-center justify-center h-[50vh]">
-          <div className="text-gray-400 animate-pulse">Loading your identity...</div>
+          <div className="text-gray-400 animate-pulse">Loading your DDI...</div>
         </div>
       </div>
     );
@@ -140,8 +140,8 @@ export default function DriverDashboard() {
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white">Digital Driving Identity</h1>
-            <p className="text-gray-400 mt-1">Configure preferences that follow you to any vehicle</p>
+            <h1 className="text-2xl font-bold text-white">My DDI</h1>
+            <p className="text-gray-400 mt-1">Build your Digital Driving Identity &mdash; it follows you to any vehicle</p>
           </div>
           <div className="flex items-center gap-4">
             {saveMsg && (
@@ -151,7 +151,7 @@ export default function DriverDashboard() {
             )}
             <Button onClick={saveProfile} disabled={saving} className="gap-2">
               <Save className="w-4 h-4" />
-              {saving ? "Saving..." : "Save Profile"}
+              {saving ? "Saving..." : "Save DDI"}
             </Button>
           </div>
         </div>
@@ -160,8 +160,8 @@ export default function DriverDashboard() {
         <Card className="mb-8">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <Zap className="w-5 h-5 text-brand-400" />
-              <span className="font-medium text-white">Profile Completeness</span>
+              <Fingerprint className="w-5 h-5 text-sky-400" />
+              <span className="font-medium text-white">DDI Completeness</span>
             </div>
             <Badge variant={completeness === 100 ? "success" : completeness > 50 ? "warning" : "danger"}>
               {completeness}%
@@ -174,7 +174,7 @@ export default function DriverDashboard() {
             />
           </div>
           <p className="text-xs text-gray-500 mt-2">
-            Complete all categories for the best sync experience across vehicles.
+            Complete all 6 identity dimensions for full DDI portability across vehicles.
           </p>
         </Card>
 

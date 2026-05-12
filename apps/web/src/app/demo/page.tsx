@@ -220,11 +220,11 @@ export default function DemoPage() {
             <LogoMark size={48} />
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
-            See the Identity Sync Engine
+            DDI in Action
           </h1>
           <p className="text-gray-400 max-w-xl mx-auto">
-            Watch a Digital Driving Identity sync to any connected vehicle in real time.
-            This is what person-centric mobility looks like. No account required.
+            Watch a Digital Driving Identity sync to any vehicle in real time.
+            This is what &ldquo;This car knows ME&rdquo; looks like. No account needed.
           </p>
         </div>
 
@@ -238,10 +238,10 @@ export default function DemoPage() {
               <div className="flex items-center gap-2">
                 <User className="w-4 h-4 text-sky-400" />
                 <span className="font-semibold text-white">{demoDriver.name}</span>
-                <Badge variant="info">Driver</Badge>
+                <Badge variant="info">DDI Active</Badge>
               </div>
               <p className="text-xs text-gray-400 mt-0.5">
-                6 preference categories configured &middot; Profile 100% complete
+                6 identity dimensions &middot; DDI 100% complete
               </p>
             </div>
             <div className="hidden sm:grid grid-cols-6 gap-2">
@@ -258,7 +258,7 @@ export default function DemoPage() {
         {phase === "select" && (
           <div>
             <h2 className="text-xl font-semibold text-white mb-4">
-              Step 1: Choose a vehicle to sync with
+              Choose a vehicle to sync your DDI with
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {demoVehicles.map((v) => (
@@ -479,13 +479,13 @@ export default function DemoPage() {
             {/* CTA */}
             <div className="mt-8 text-center">
               <p className="text-gray-400 mb-4">
-                This is person-centric mobility. One identity. Any vehicle. Instant adaptation.
-                The car doesn&apos;t define you -- your Digital Driving Identity defines the car.
+                One DDI. Any vehicle. Instant adaptation.
+                This car knows ME &mdash; that&apos;s what DDI delivers.
               </p>
               <div className="flex justify-center gap-4">
                 <Link href="/register">
                   <Button size="lg" className="gap-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 border-0">
-                    Create Your Identity <ArrowRight className="w-5 h-5" />
+                    Create Your DDI <ArrowRight className="w-5 h-5" />
                   </Button>
                 </Link>
                 <Button variant="secondary" size="lg" onClick={reset} className="gap-2">

@@ -3,8 +3,8 @@ import { AuthProvider } from "@/lib/auth-context";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Futuristic - Digital Driving Identity",
-  description: "Your identity, preferences, and needs exist independently of any physical vehicle.",
+  title: "Futuristic | DDI — Digital Driving Identity",
+  description: "DDI is a portable identity layer that instantly personalizes any connected vehicle. This car knows ME.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
