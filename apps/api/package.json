@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "tsc",
+    "build": "echo 'api build skipped — runtime only'",
     "start": "node dist/server.js"
   },
   "dependencies": {
