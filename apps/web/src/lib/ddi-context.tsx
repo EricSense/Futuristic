@@ -9,13 +9,13 @@ import {
   type ReactNode,
 } from "react";
 
-export interface PassportCredential {
+export interface VerifiedCredential {
   type: string;
   issuer: string;
   verified: boolean;
 }
 
-export interface MobilityPassport {
+export interface DDI {
   id: string;
   holderName: string;
   homeCity: string;
@@ -24,7 +24,7 @@ export interface MobilityPassport {
     verified: boolean;
     biometric: boolean;
   };
-  licenses: PassportCredential[];
+  licenses: VerifiedCredential[];
   insurance: { carrier: string; coverage: "domestic" | "global"; verified: boolean }[];
   accessibility: {
     mobility?: string;
@@ -39,30 +39,29 @@ export interface MobilityPassport {
   trustScore: number;
 }
 
-interface PassportContextValue {
-  passport: MobilityPassport | null;
+export interface CreateDDIInput {
+  holderName: string;
+  homeCity: string;
+  accessibility?: DDI["accessibility"];
+  languages?: string[];
+  aiPersona?: DDI["aiPersona"]["tone"];
+}
+
+interface DDIContextValue {
+  ddi: DDI | null;
   loading: boolean;
-  claim: (input: ClaimInput) => MobilityPassport;
+  create: (input: CreateDDIInput) => DDI;
   revoke: () => void;
 }
 
-export interface ClaimInput {
-  holderName: string;
-  homeCity: string;
-  accessibility?: MobilityPassport["accessibility"];
-  languages?: string[];
-  aiPersona?: MobilityPassport["aiPersona"]["tone"];
-}
+const STORAGE_KEY = "futuristic_ddi_v2";
 
-const STORAGE_KEY = "futuristic_passport_v1";
-
-const PassportContext = createContext<PassportContextValue | null>(null);
+const DDIContext = createContext<DDIContextValue | null>(null);
 
 function generateDDIId(): string {
-  const segments = 4;
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   const out: string[] = ["DDI"];
-  for (let s = 0; s < segments; s++) {
+  for (let s = 0; s < 4; s++) {
     let g = "";
     for (let i = 0; i < 4; i++) g += chars[Math.floor(Math.random() * chars.length)];
     out.push(g);
@@ -70,7 +69,7 @@ function generateDDIId(): string {
   return out.join("-");
 }
 
-export function buildPassport(input: ClaimInput): MobilityPassport {
+export function buildDDI(input: CreateDDIInput): DDI {
   return {
     id: generateDDIId(),
     holderName: input.holderName.trim(),
@@ -101,7 +100,7 @@ export function buildPassport(input: ClaimInput): MobilityPassport {
   };
 }
 
-export const SAMPLE_PASSPORT: MobilityPassport = {
+export const SAMPLE_DDI: DDI = {
   id: "DDI-7K9F-4M2X-LP3R-WQ8N",
   holderName: "Maya Chen",
   homeCity: "San Francisco, USA",
@@ -123,43 +122,44 @@ export const SAMPLE_PASSPORT: MobilityPassport = {
   trustScore: 982,
 };
 
-export function PassportProvider({ children }: { children: ReactNode }) {
-  const [passport, setPassport] = useState<MobilityPassport | null>(null);
+export function DDIProvider({ children }: { children: ReactNode }) {
+  const [ddi, setDDI] = useState<DDI | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     try {
       const stored = typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null;
-      if (stored) setPassport(JSON.parse(stored));
+      if (stored) setDDI(JSON.parse(stored));
     } catch {
       // ignore corrupt storage
     }
     setLoading(false);
   }, []);
 
-  const claim = useCallback((input: ClaimInput) => {
-    const p = buildPassport(input);
+  const create = useCallback((input: CreateDDIInput) => {
+    const next = buildDDI(input);
     if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
     }
-    setPassport(p);
-    return p;
+    setDDI(next);
+    return next;
   }, []);
 
   const revoke = useCallback(() => {
-    if (typeof window !== "undefined") localStorage.removeItem(STORAGE_KEY);
-    setPassport(null);
+    if (typeof window !== "undefined") {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem("futuristic_passport_v1");
+    }
+    setDDI(null);
   }, []);
 
   return (
-    <PassportContext.Provider value={{ passport, loading, claim, revoke }}>
-      {children}
-    </PassportContext.Provider>
+    <DDIContext.Provider value={{ ddi, loading, create, revoke }}>{children}</DDIContext.Provider>
   );
 }
 
-export function usePassport() {
-  const ctx = useContext(PassportContext);
-  if (!ctx) throw new Error("usePassport must be used within PassportProvider");
+export function useDDI() {
+  const ctx = useContext(DDIContext);
+  if (!ctx) throw new Error("useDDI must be used within DDIProvider");
   return ctx;
 }

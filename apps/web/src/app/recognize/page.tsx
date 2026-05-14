@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { usePassport, SAMPLE_PASSPORT, type MobilityPassport } from "@/lib/passport-context";
+import { useDDI, SAMPLE_DDI, type DDI } from "@/lib/ddi-context";
 import { Navbar } from "@/components/navbar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -51,7 +51,7 @@ const PHASE_INDEX: Record<Phase, number> = { idle: -1, detecting: 0, handshake: 
 interface FactCard {
   icon: LucideIcon;
   label: string;
-  value: (p: MobilityPassport) => string;
+  value: (p: DDI) => string;
   revealAt: number;
 }
 
@@ -78,7 +78,7 @@ function cap(s: string) {
   return s.replace(/[-_]/g, " ").replace(/\b\w/g, (m) => m.toUpperCase());
 }
 
-function greetingFor(p: MobilityPassport): string {
+function greetingFor(p: DDI): string {
   const ja = p.languages.includes("ja");
   const tone = p.aiPersona.tone;
   const first = p.holderName.split(" ")[0] || p.holderName;
@@ -94,8 +94,8 @@ function greetingFor(p: MobilityPassport): string {
 }
 
 export default function RecognizePage() {
-  const { passport } = usePassport();
-  const activePassport = passport ?? SAMPLE_PASSPORT;
+  const { ddi } = useDDI();
+  const activeDDI = ddi ?? SAMPLE_DDI;
 
   const [phase, setPhase] = useState<Phase>("idle");
   const [distance, setDistance] = useState(100); // 100% = far, 0% = inside
@@ -156,8 +156,8 @@ export default function RecognizePage() {
           </h1>
           <p className="text-gray-400 max-w-2xl mx-auto text-sm sm:text-base">
             Watch a vehicle recognize a person it has never met &mdash; using only their DDI.
-            {!passport && (
-              <> Using sample passport <span className="text-sky-300 font-medium">{SAMPLE_PASSPORT.holderName}</span>.</>
+            {!ddi && (
+              <> Using sample DDI for <span className="text-sky-300 font-medium">{SAMPLE_DDI.holderName}</span>.</>
             )}
           </p>
         </div>
@@ -227,7 +227,7 @@ export default function RecognizePage() {
                     <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-blue-600 mb-4 shadow-lg shadow-sky-500/40">
                       <CheckCircle2 className="w-8 h-8 text-white" />
                     </div>
-                    <p className="text-2xl font-bold text-white mb-1">{activePassport.holderName}</p>
+                    <p className="text-2xl font-bold text-white mb-1">{activeDDI.holderName}</p>
                     <p className="text-sm text-sky-300">Person recognized · Cabin ready</p>
                   </>
                 ) : (
@@ -324,11 +324,11 @@ export default function RecognizePage() {
                       In-cabin AI
                     </p>
                     <p className="text-lg text-white font-medium leading-snug">
-                      &ldquo;{greetingFor(activePassport)}&rdquo;
+                      &ldquo;{greetingFor(activeDDI)}&rdquo;
                     </p>
                     <p className="text-xs text-gray-500 mt-2">
-                      Spoken in <span className="text-gray-300">{activePassport.languages[0].toUpperCase()}</span> ·
-                      Tone: <span className="text-gray-300">{cap(activePassport.aiPersona.tone)}</span>
+                      Spoken in <span className="text-gray-300">{activeDDI.languages[0].toUpperCase()}</span> ·
+                      Tone: <span className="text-gray-300">{cap(activeDDI.aiPersona.tone)}</span>
                     </p>
                   </div>
                 </div>
@@ -361,7 +361,7 @@ export default function RecognizePage() {
                   <div className="flex-1 min-w-0">
                     <p className="text-[10px] uppercase tracking-widest text-gray-500">{fact.label}</p>
                     <p className={cn("text-sm font-medium mt-0.5", isRevealed ? "text-white" : "text-gray-700")}>
-                      {isRevealed ? fact.value(activePassport) : "—"}
+                      {isRevealed ? fact.value(activeDDI) : "—"}
                     </p>
                   </div>
                   {isRevealed && (
@@ -379,16 +379,16 @@ export default function RecognizePage() {
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-300">DDI ID</span>
                 <span className="text-sky-300 font-mono text-xs truncate ml-2">
-                  {activePassport.id.split("-").slice(0, 3).join("-")}…
+                  {activeDDI.id.split("-").slice(0, 3).join("-")}…
                 </span>
               </div>
               <div className="flex items-center justify-between text-sm mt-1">
                 <span className="text-gray-300">Trust score</span>
-                <span className="text-white font-mono">{activePassport.trustScore}</span>
+                <span className="text-white font-mono">{activeDDI.trustScore}</span>
               </div>
               <div className="flex items-center justify-between text-sm mt-1">
                 <span className="text-gray-300">Federation</span>
-                <Badge variant="info" className="text-[10px]">{activePassport.trustedNetworks.length} networks</Badge>
+                <Badge variant="info" className="text-[10px]">{activeDDI.trustedNetworks.length} networks</Badge>
               </div>
             </Card>
 
@@ -410,10 +410,10 @@ export default function RecognizePage() {
                 See it across a full day
               </Button>
             </Link>
-            {!passport && (
-              <Link href="/claim">
+            {!ddi && (
+              <Link href="/ddi">
                 <Button className="gap-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 border-0">
-                  <Fingerprint className="w-4 h-4" /> Claim your DDI
+                  <Fingerprint className="w-4 h-4" /> Create your DDI
                 </Button>
               </Link>
             )}

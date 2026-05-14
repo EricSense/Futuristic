@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { usePassport } from "@/lib/passport-context";
+import { useDDI } from "@/lib/ddi-context";
 import { Button } from "@/components/ui/button";
 import { LogoMark } from "@/components/logo";
 import { Fingerprint, Compass, LogOut, Eye, Network, Menu, X } from "lucide-react";
@@ -16,7 +16,7 @@ const NAV_LINKS = [
 ];
 
 export function Navbar() {
-  const { passport, revoke } = usePassport();
+  const { ddi, revoke } = useDDI();
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
@@ -49,32 +49,32 @@ export function Navbar() {
               </Link>
             ))}
             <div className="w-px h-5 bg-white/10 mx-2" />
-            {passport ? (
+            {ddi ? (
               <>
-                <Link href="/passport">
+                <Link href="/ddi">
                   <Button variant="ghost" size="sm" className="gap-1.5">
                     <Fingerprint className="w-3.5 h-3.5" />
-                    My Passport
+                    My DDI
                   </Button>
                 </Link>
                 <span className="text-sm text-gray-400 hidden lg:inline ml-1">
-                  {passport.holderName}
+                  {ddi.holderName}
                 </span>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={handleRevoke}
                   className="gap-1.5 text-gray-400"
-                  title="Revoke passport"
+                  title="Revoke DDI"
                 >
                   <LogOut className="w-4 h-4" />
                 </Button>
               </>
             ) : (
-              <Link href="/claim">
+              <Link href="/ddi">
                 <Button variant="primary" size="sm" className="gap-1.5">
                   <Fingerprint className="w-3.5 h-3.5" />
-                  Claim Passport
+                  Create DDI
                 </Button>
               </Link>
             )}
@@ -107,31 +107,22 @@ export function Navbar() {
               </Link>
             ))}
             <div className="h-px bg-white/5 my-2" />
-            {passport ? (
-              <>
-                <Link href="/passport" onClick={() => setOpen(false)}>
-                  <Button variant="ghost" size="sm" className="w-full justify-start gap-2">
-                    <Fingerprint className="w-4 h-4" />
-                    My Passport ({passport.holderName})
-                  </Button>
-                </Link>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleRevoke}
-                  className="w-full justify-start gap-2 text-gray-400"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Revoke passport
-                </Button>
-              </>
-            ) : (
-              <Link href="/claim" onClick={() => setOpen(false)}>
-                <Button variant="primary" size="sm" className="w-full justify-start gap-2">
-                  <Fingerprint className="w-4 h-4" />
-                  Claim Passport
-                </Button>
-              </Link>
+            <Link href="/ddi" onClick={() => setOpen(false)}>
+              <Button variant={ddi ? "ghost" : "primary"} size="sm" className="w-full justify-start gap-2">
+                <Fingerprint className="w-4 h-4" />
+                {ddi ? `My DDI (${ddi.holderName})` : "Create DDI"}
+              </Button>
+            </Link>
+            {ddi && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleRevoke}
+                className="w-full justify-start gap-2 text-gray-400"
+              >
+                <LogOut className="w-4 h-4" />
+                Revoke DDI
+              </Button>
             )}
           </div>
         </div>

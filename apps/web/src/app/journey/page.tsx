@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { usePassport, SAMPLE_PASSPORT, type MobilityPassport } from "@/lib/passport-context";
+import { useDDI, SAMPLE_DDI, type DDI } from "@/lib/ddi-context";
 import { Navbar } from "@/components/navbar";
 import { LogoMark } from "@/components/logo";
 import { Button } from "@/components/ui/button";
@@ -46,7 +46,7 @@ interface CredentialEvent {
   key: CredentialKey;
   icon: LucideIcon;
   title: string;
-  detail: (p: MobilityPassport) => string;
+  detail: (p: DDI) => string;
 }
 
 interface Stop {
@@ -60,7 +60,7 @@ interface Stop {
   operator: string;
   action: string;
   events: CredentialEvent[];
-  outcome: (p: MobilityPassport) => string;
+  outcome: (p: DDI) => string;
   durationSec: number;
 }
 
@@ -125,7 +125,7 @@ const STOPS: Stop[] = [
     mode: "Cross-border flight",
     modeIcon: Plane,
     operator: "ANA + TSA + Japan Immigration",
-    action: "You walk to the boarding gate. No paper boarding pass. No passport scan line.",
+    action: "You walk to the boarding gate. No paper boarding pass. No identity scan line.",
     durationSec: 8,
     events: [
       { key: "border", icon: Globe, title: "Cross-border identity verified", detail: () => "TSA + Japan immigration pre-cleared via DDI federation" },
@@ -195,8 +195,8 @@ const STOPS: Stop[] = [
 type Phase = "intro" | "live" | "complete";
 
 export default function JourneyPage() {
-  const { passport } = usePassport();
-  const activePassport = passport ?? SAMPLE_PASSPORT;
+  const { ddi } = useDDI();
+  const activeDDI = ddi ?? SAMPLE_DDI;
 
   const [phase, setPhase] = useState<Phase>("intro");
   const [currentStop, setCurrentStop] = useState(0);
@@ -273,32 +273,32 @@ export default function JourneyPage() {
           <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/20 bg-sky-500/5 px-4 py-1.5 mb-4">
             <Compass className="w-3.5 h-3.5 text-sky-400" />
             <span className="text-xs text-sky-300 font-semibold tracking-wide uppercase">
-              Live Prototype · A Day in Universal Mobility
+              Live Prototype · A Day of Vehicles That Know You
             </span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
-            Watch a DDI travel the world.
+            Every vehicle, every mode &mdash; instant recognition.
           </h1>
           <p className="text-gray-400 max-w-2xl mx-auto text-sm sm:text-base">
-            One identity. Five modes. Two countries. Six operators.
-            {!passport && <> &nbsp;Using sample passport <span className="text-sky-300 font-medium">{SAMPLE_PASSPORT.holderName}</span>.</>}
+            One DDI. Five modes. Two countries. Six operators. Zero unfamiliar moments.
+            {!ddi && <> &nbsp;Using sample DDI for <span className="text-sky-300 font-medium">{SAMPLE_DDI.holderName}</span>.</>}
           </p>
         </div>
 
-        {/* PASSPORT BAR */}
+        {/* DDI BAR */}
         <Card className="mb-6 border-sky-500/10">
           <div className="flex items-center gap-4">
             <LogoMark size={36} />
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <span className="font-semibold text-white truncate">{activePassport.holderName}</span>
+                <span className="font-semibold text-white truncate">{activeDDI.holderName}</span>
                 <Badge variant="info">DDI Active</Badge>
-                {!passport && <Badge variant="warning">Sample</Badge>}
+                {!ddi && <Badge variant="warning">Sample</Badge>}
               </div>
-              <p className="text-xs text-gray-500 font-mono mt-0.5 truncate">{activePassport.id}</p>
+              <p className="text-xs text-gray-500 font-mono mt-0.5 truncate">{activeDDI.id}</p>
             </div>
-            {!passport && (
-              <Link href="/claim">
+            {!ddi && (
+              <Link href="/ddi">
                 <Button variant="ghost" size="sm" className="gap-1.5 text-sky-400 hover:text-sky-300">
                   <Fingerprint className="w-3.5 h-3.5" /> Use yours
                 </Button>
@@ -459,7 +459,7 @@ export default function JourneyPage() {
                             {meta.label}
                           </Badge>
                         </div>
-                        <p className="text-xs text-gray-400 mt-0.5">{event.detail(activePassport)}</p>
+                        <p className="text-xs text-gray-400 mt-0.5">{event.detail(activeDDI)}</p>
                       </div>
                       {isRevealed && <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-1" />}
                     </div>
@@ -476,7 +476,7 @@ export default function JourneyPage() {
                         <CheckCircle2 className="h-4 w-4" />
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-white">{stop.outcome(activePassport)}</p>
+                        <p className="text-sm font-semibold text-white">{stop.outcome(activeDDI)}</p>
                         <p className="text-xs text-gray-400">Friction: {stop.durationSec}s</p>
                       </div>
                     </div>
@@ -507,10 +507,10 @@ export default function JourneyPage() {
               <div className="relative text-center py-6">
                 <LogoMark size={56} className="mx-auto mb-4" />
                 <h2 className="text-3xl sm:text-4xl font-bold text-white mb-2">
-                  One DDI. One day.
+                  Every car along the way knew you.
                 </h2>
                 <p className="text-lg text-sky-300 font-medium mb-6">
-                  Infinite mobility experiences.
+                  Nothing was unfamiliar. Nothing required learning.
                 </p>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto">
@@ -542,19 +542,11 @@ export default function JourneyPage() {
               <Button onClick={reset} variant="secondary" size="lg" className="gap-2">
                 <RotateCcw className="w-4 h-4" /> Run again
               </Button>
-              {!passport ? (
-                <Link href="/claim">
-                  <Button size="lg" className="gap-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 border-0">
-                    <Fingerprint className="w-4 h-4" /> Claim your own DDI
-                  </Button>
-                </Link>
-              ) : (
-                <Link href="/passport">
-                  <Button size="lg" className="gap-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 border-0">
-                    <Fingerprint className="w-4 h-4" /> View my passport
-                  </Button>
-                </Link>
-              )}
+              <Link href="/ddi">
+                <Button size="lg" className="gap-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 border-0">
+                  <Fingerprint className="w-4 h-4" /> {ddi ? "View my DDI" : "Create your own DDI"}
+                </Button>
+              </Link>
             </div>
           </div>
         )}
