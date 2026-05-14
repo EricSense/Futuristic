@@ -22,6 +22,8 @@ import {
   Lock,
   Eye,
   CheckCircle2,
+  Compass,
+  Cpu,
 } from "lucide-react";
 
 export default function LandingPage() {
@@ -47,31 +49,30 @@ export default function LandingPage() {
           </div>
 
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-[1.05]">
-            From &ldquo;This is my car&rdquo;
+            From &ldquo;This is MY car&rdquo;
             <br />
             <span className="bg-gradient-to-r from-sky-300 via-blue-400 to-blue-600 bg-clip-text text-transparent">
-              to &ldquo;This car knows me.&rdquo;
+              to &ldquo;This car knows ME.&rdquo;
             </span>
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg sm:text-xl text-gray-400 leading-relaxed">
-            One identity. Every vehicle. Every border. Every mode.
-            <br className="hidden sm:block" />
-            Your DDI is the passport for infinite mobility.
+            Futuristic builds DDI &mdash; the Digital Driving Identity that lets every vehicle
+            instantly understand the person it is serving.
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/journey">
+            <Link href="/recognize">
               <Button
                 size="lg"
                 className="gap-2 text-base px-8 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 border-0"
               >
-                <Play className="w-5 h-5" /> Run the Journey Prototype
+                <Eye className="w-5 h-5" /> Watch a car recognize you
               </Button>
             </Link>
-            <Link href="/claim">
+            <Link href="/journey">
               <Button variant="secondary" size="lg" className="gap-2 text-base px-8">
-                Claim Your Passport <ArrowRight className="w-5 h-5" />
+                <Compass className="w-5 h-5" /> Run a full journey
               </Button>
             </Link>
           </div>
@@ -106,12 +107,88 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* THREE WAYS TO EXPERIENCE */}
+      <section className="py-20 border-t border-white/5">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <p className="text-sm font-medium uppercase tracking-widest text-sky-400 mb-3">
+              Experience Futuristic
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-white">
+              Three live prototypes
+            </h2>
+            <p className="text-gray-400 mt-3 max-w-xl mx-auto">
+              Each one shows a different facet of cars that instantly understand people.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <Link
+              href="/recognize"
+              className="group rounded-2xl border border-white/10 bg-surface-50 p-7 hover:border-sky-500/30 hover:bg-sky-500/5 transition-all"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-500/10 text-sky-400 mb-4 group-hover:scale-110 transition-transform">
+                <Eye className="h-6 w-6" />
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">
+                Recognize
+              </h3>
+              <p className="text-sm text-gray-400 leading-relaxed mb-4">
+                Stand in front of a Waymo. Watch from the car&apos;s POV as it identifies you and
+                the cabin AI greets you by name &mdash; in your tone and language.
+              </p>
+              <span className="text-sm text-sky-400 font-medium inline-flex items-center gap-1">
+                Watch the recognition <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+              </span>
+            </Link>
+
+            <Link
+              href="/journey"
+              className="group rounded-2xl border border-white/10 bg-surface-50 p-7 hover:border-sky-500/30 hover:bg-sky-500/5 transition-all"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-500/10 text-sky-400 mb-4 group-hover:scale-110 transition-transform">
+                <Compass className="h-6 w-6" />
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">
+                Journey
+              </h3>
+              <p className="text-sm text-gray-400 leading-relaxed mb-4">
+                Travel from San Francisco to Tokyo across 5 modes, 6 operators, and 2 countries.
+                One DDI carries identity, insurance, accessibility, and language end to end.
+              </p>
+              <span className="text-sm text-sky-400 font-medium inline-flex items-center gap-1">
+                Take the journey <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+              </span>
+            </Link>
+
+            <Link
+              href="/platform"
+              className="group rounded-2xl border border-white/10 bg-surface-50 p-7 hover:border-sky-500/30 hover:bg-sky-500/5 transition-all"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-500/10 text-sky-400 mb-4 group-hover:scale-110 transition-transform">
+                <Cpu className="h-6 w-6" />
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">
+                Platform
+              </h3>
+              <p className="text-sm text-gray-400 leading-relaxed mb-4">
+                For OEMs, mobility operators, insurers, and cities. The federation, the SDK, the
+                trust architecture &mdash; everything to recognize people in your own product.
+              </p>
+              <span className="text-sm text-sky-400 font-medium inline-flex items-center gap-1">
+                Build on DDI <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+              </span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* THE BIG IDEA */}
       <section className="py-24 border-t border-white/5">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <p className="text-sm font-medium uppercase tracking-widest text-sky-400 mb-3">
-              The New Paradigm
+              The Paradigm Shift
             </p>
             <h2 className="text-3xl sm:text-5xl font-bold text-white leading-tight">
               Identity defines experience.
@@ -340,12 +417,15 @@ export default function LandingPage() {
                 DDI
               </span>
             </div>
-            <div className="flex items-center gap-6 text-sm text-gray-500">
-              <Link href="/journey" className="hover:text-white transition-colors">
-                Journey Prototype
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-gray-500 justify-center">
+              <Link href="/recognize" className="hover:text-white transition-colors">
+                Recognize
               </Link>
-              <Link href="/passport" className="hover:text-white transition-colors">
-                My Passport
+              <Link href="/journey" className="hover:text-white transition-colors">
+                Journey
+              </Link>
+              <Link href="/platform" className="hover:text-white transition-colors">
+                Platform
               </Link>
               <Link href="/claim" className="hover:text-white transition-colors">
                 Claim
