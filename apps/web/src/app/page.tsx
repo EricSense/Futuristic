@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Navbar } from "@/components/navbar";
 import { LogoMark } from "@/components/logo";
+import { HeroDemo } from "@/components/hero-demo";
 import { Button } from "@/components/ui/button";
 import {
   Fingerprint,
@@ -17,13 +18,9 @@ import {
   Accessibility,
   Bot,
   Building2,
-  Network,
-  Lock,
   Eye,
-  CheckCircle2,
   Compass,
   Cpu,
-  Brain,
   Zap,
   Users,
 } from "lucide-react";
@@ -36,60 +33,66 @@ export default function LandingPage() {
       {/* HERO */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-sky-950/30 via-transparent to-transparent" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[700px] rounded-full bg-sky-500/5 blur-[140px]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1100px] h-[700px] rounded-full bg-sky-500/5 blur-[160px]" />
 
-        <div className="relative mx-auto max-w-7xl px-4 pt-24 pb-28 sm:px-6 lg:px-8 text-center">
-          <div className="flex justify-center mb-6">
-            <LogoMark size={88} />
+        <div className="relative mx-auto max-w-7xl px-4 pt-20 pb-24 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+            <div className="lg:col-span-7 text-center lg:text-left">
+              <div className="flex justify-center lg:justify-start mb-6">
+                <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/20 bg-sky-500/5 px-4 py-1.5">
+                  <LogoMark size={18} />
+                  <span className="text-xs text-sky-300 font-semibold tracking-wide uppercase">
+                    Futuristic builds DDI
+                  </span>
+                </div>
+              </div>
+
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-[1.05]">
+                From &ldquo;This is MY car&rdquo;
+                <br />
+                <span className="bg-gradient-to-r from-sky-300 via-blue-400 to-blue-600 bg-clip-text text-transparent">
+                  to &ldquo;This car knows ME.&rdquo;
+                </span>
+              </h1>
+
+              <p className="mt-6 max-w-xl mx-auto lg:mx-0 text-lg text-gray-400 leading-relaxed">
+                Futuristic is building <span className="text-white font-medium">Digital Driving Identity</span> &mdash; the
+                layer that lets every vehicle instantly understand the person inside.
+              </p>
+
+              <div className="mt-8 flex flex-col sm:flex-row items-center lg:items-start lg:justify-start justify-center gap-3">
+                <Link href="/recognize">
+                  <Button
+                    size="lg"
+                    className="gap-2 text-base px-7 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 border-0"
+                  >
+                    <Eye className="w-5 h-5" /> See full prototype
+                  </Button>
+                </Link>
+                <Link href="/platform">
+                  <Button variant="secondary" size="lg" className="gap-2 text-base px-7">
+                    Build with us <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </Link>
+              </div>
+
+              <p className="mt-4 text-xs text-gray-500 text-center lg:text-left">
+                Try it instantly &mdash; no signup, no install.
+              </p>
+            </div>
+
+            <div className="lg:col-span-5">
+              <HeroDemo />
+            </div>
           </div>
-
-          <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/20 bg-sky-500/5 px-5 py-2 mb-8">
-            <Fingerprint className="w-4 h-4 text-sky-400" />
-            <span className="text-sm text-sky-300 font-semibold tracking-wide uppercase">
-              Paradigm Shift
-            </span>
-          </div>
-
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-[1.05]">
-            From &ldquo;This is MY car&rdquo;
-            <br />
-            <span className="bg-gradient-to-r from-sky-300 via-blue-400 to-blue-600 bg-clip-text text-transparent">
-              to &ldquo;This car knows ME.&rdquo;
-            </span>
-          </h1>
-
-          <p className="mx-auto mt-6 max-w-2xl text-lg sm:text-xl text-gray-400 leading-relaxed">
-            Futuristic builds <span className="text-white font-medium">DDI &mdash; Digital Driving Identity</span>.
-            We are creating cars that instantly understand people.
-          </p>
-
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/recognize">
-              <Button
-                size="lg"
-                className="gap-2 text-base px-8 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 border-0"
-              >
-                <Eye className="w-5 h-5" /> Watch a car recognize you
-              </Button>
-            </Link>
-            <Link href="/journey">
-              <Button variant="secondary" size="lg" className="gap-2 text-base px-8">
-                <Compass className="w-5 h-5" /> Run a full journey
-              </Button>
-            </Link>
-          </div>
-
-          <p className="mt-4 text-xs text-gray-500">
-            No app downloads. No accounts. Try the prototype in 30 seconds.
-          </p>
         </div>
       </section>
 
       {/* MODES STRIP */}
-      <section className="border-t border-white/5 py-10 bg-surface-50/30">
+      <section className="border-t border-white/5 py-8 bg-surface-50/30">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-xs uppercase tracking-widest text-gray-500 mb-6">
-            One DDI works across every mode of transport
+          <p className="text-center text-xs uppercase tracking-widest text-gray-500 mb-5">
+            One DDI. Every vehicle. Every mode.
           </p>
           <div className="grid grid-cols-3 sm:grid-cols-6 gap-4 max-w-3xl mx-auto">
             {[
@@ -101,8 +104,8 @@ export default function LandingPage() {
               { icon: Bot, label: "Autonomous" },
             ].map(({ icon: Icon, label }) => (
               <div key={label} className="flex flex-col items-center gap-2 text-gray-500">
-                <Icon className="w-6 h-6" />
-                <span className="text-xs font-medium">{label}</span>
+                <Icon className="w-5 h-5" />
+                <span className="text-[11px] font-medium">{label}</span>
               </div>
             ))}
           </div>
@@ -114,75 +117,61 @@ export default function LandingPage() {
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <p className="text-sm font-medium uppercase tracking-widest text-sky-400 mb-3">
-              Experience Futuristic
+              Three live prototypes
             </p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white">Three live prototypes</h2>
-            <p className="text-gray-400 mt-3 max-w-xl mx-auto">
-              Each one shows a different facet of cars that instantly understand people.
-            </p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-white">Experience DDI</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <Link
-              href="/recognize"
-              className="group rounded-2xl border border-white/10 bg-surface-50 p-7 hover:border-sky-500/30 hover:bg-sky-500/5 transition-all"
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-500/10 text-sky-400 mb-4 group-hover:scale-110 transition-transform">
-                <Eye className="h-6 w-6" />
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-2">Recognize</h3>
-              <p className="text-sm text-gray-400 leading-relaxed mb-4">
-                Stand in front of a Waymo. Watch from the car&apos;s POV as it identifies you, and
-                the cabin AI greets you by name &mdash; in your tone and language.
-              </p>
-              <span className="text-sm text-sky-400 font-medium inline-flex items-center gap-1">
-                Watch the recognition <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-              </span>
-            </Link>
-
-            <Link
-              href="/journey"
-              className="group rounded-2xl border border-white/10 bg-surface-50 p-7 hover:border-sky-500/30 hover:bg-sky-500/5 transition-all"
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-500/10 text-sky-400 mb-4 group-hover:scale-110 transition-transform">
-                <Compass className="h-6 w-6" />
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-2">Journey</h3>
-              <p className="text-sm text-gray-400 leading-relaxed mb-4">
-                Travel from San Francisco to Tokyo across 5 modes, 6 operators, and 2 countries.
-                Every vehicle, every transit gate &mdash; instant recognition.
-              </p>
-              <span className="text-sm text-sky-400 font-medium inline-flex items-center gap-1">
-                Take the journey <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-              </span>
-            </Link>
-
-            <Link
-              href="/platform"
-              className="group rounded-2xl border border-white/10 bg-surface-50 p-7 hover:border-sky-500/30 hover:bg-sky-500/5 transition-all"
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-500/10 text-sky-400 mb-4 group-hover:scale-110 transition-transform">
-                <Cpu className="h-6 w-6" />
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-2">Platform</h3>
-              <p className="text-sm text-gray-400 leading-relaxed mb-4">
-                For OEMs, mobility operators, insurers, and cities. The federation, the SDK, and
-                the trust architecture &mdash; everything to recognize people in your own product.
-              </p>
-              <span className="text-sm text-sky-400 font-medium inline-flex items-center gap-1">
-                Build on DDI <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-              </span>
-            </Link>
+            {[
+              {
+                href: "/recognize",
+                icon: Eye,
+                title: "Recognize",
+                desc: "From a Waymo's POV: scan, handshake, identify, greet. Watch a car know a stranger in under 2 seconds.",
+                cta: "Watch the recognition",
+              },
+              {
+                href: "/journey",
+                icon: Compass,
+                title: "Journey",
+                desc: "San Francisco → Tokyo across 5 modes and 6 operators. One DDI, recognized everywhere.",
+                cta: "Take the journey",
+              },
+              {
+                href: "/platform",
+                icon: Cpu,
+                title: "Platform",
+                desc: "For OEMs, mobility operators, insurers, and cities. The network, the SDK, the trust architecture.",
+                cta: "Build on DDI",
+              },
+            ].map(({ href, icon: Icon, title, desc, cta }) => (
+              <Link
+                key={href}
+                href={href}
+                className="group rounded-2xl border border-white/10 bg-surface-50 p-7 hover:border-sky-500/30 hover:bg-sky-500/5 transition-all"
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-500/10 text-sky-400 mb-4 group-hover:scale-110 transition-transform">
+                  <Icon className="h-6 w-6" />
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">{title}</h3>
+                <p className="text-sm text-gray-400 leading-relaxed mb-4">{desc}</p>
+                <span className="text-sm text-sky-400 font-medium inline-flex items-center gap-1">
+                  {cta}{" "}
+                  <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+                </span>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
 
       {/* PARADIGM SHIFT */}
-      <section className="py-24 border-t border-white/5 bg-surface-50/30">
+      <section className="py-20 border-t border-white/5 bg-surface-50/30">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <p className="text-sm font-medium uppercase tracking-widest text-sky-400 mb-3">
-              The Paradigm Shift
+              The paradigm shift
             </p>
             <h2 className="text-3xl sm:text-5xl font-bold text-white leading-tight">
               Identity defines experience.
@@ -226,8 +215,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* THE FEAR-OF-UNFAMILIAR INSIGHT */}
-      <section className="py-24 border-t border-white/5">
+      {/* THE INSIGHT */}
+      <section className="py-20 border-t border-white/5">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <p className="text-sm font-medium uppercase tracking-widest text-sky-400 mb-3">
@@ -243,44 +232,43 @@ export default function LandingPage() {
             <p className="text-gray-400 mt-4 max-w-2xl mx-auto leading-relaxed">
               The biggest barrier to electric vehicles and autonomous driving adoption isn&apos;t
               the technology. It&apos;s the unfamiliarity. If every vehicle you enter instantly
-              understands you, that barrier disappears.
+              understands you, the barrier disappears.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div className="rounded-2xl border border-white/5 bg-surface-50 p-7">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400 mb-4">
-                <Zap className="h-6 w-6" />
+            {[
+              {
+                icon: Zap,
+                tint: "bg-emerald-500/10 text-emerald-400",
+                title: "EV adoption",
+                desc: "First-time EV drivers shouldn't feel lost. Every EV greets them like an old companion.",
+              },
+              {
+                icon: Bot,
+                tint: "bg-purple-500/10 text-purple-300",
+                title: "Autonomous trust",
+                desc: "People don't fear self-driving cars. They fear the strangeness of one. A robotaxi that knows your name is immediately trustworthy.",
+              },
+              {
+                icon: Users,
+                tint: "bg-sky-500/10 text-sky-400",
+                title: "Shared mobility",
+                desc: "Robotaxis, rentals, fleets, subscriptions — impersonal today. With DDI, a car you've never seen feels exactly as familiar as one you own.",
+              },
+            ].map(({ icon: Icon, tint, title, desc }) => (
+              <div key={title} className="rounded-2xl border border-white/5 bg-surface-50 p-7">
+                <div
+                  className={
+                    "flex h-12 w-12 items-center justify-center rounded-xl mb-4 " + tint
+                  }
+                >
+                  <Icon className="h-6 w-6" />
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">{title}</h3>
+                <p className="text-sm text-gray-400 leading-relaxed">{desc}</p>
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2">EV adoption</h3>
-              <p className="text-sm text-gray-400 leading-relaxed">
-                A first-time EV driver shouldn&apos;t feel lost. With DDI, every EV greets them
-                like an old companion &mdash; same expectations, same comfort, same flow.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-white/5 bg-surface-50 p-7">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-500/10 text-purple-300 mb-4">
-                <Bot className="h-6 w-6" />
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-2">Autonomous trust</h3>
-              <p className="text-sm text-gray-400 leading-relaxed">
-                People don&apos;t fear self-driving cars. They fear the alien strangeness of one.
-                A robotaxi that knows your name, accessibility needs, and assistant tone is
-                immediately trustworthy.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-white/5 bg-surface-50 p-7">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-500/10 text-sky-400 mb-4">
-                <Users className="h-6 w-6" />
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-2">Shared mobility</h3>
-              <p className="text-sm text-gray-400 leading-relaxed">
-                Robotaxis, rentals, fleets, subscriptions &mdash; all impersonal today. With DDI,
-                a car you&apos;ve never seen feels exactly as familiar as one you own.
-              </p>
-            </div>
+            ))}
           </div>
 
           <div className="mt-12 rounded-2xl border border-sky-500/20 bg-gradient-to-br from-sky-950/30 to-surface-50 p-8 text-center">
@@ -292,29 +280,25 @@ export default function LandingPage() {
       </section>
 
       {/* WHAT DDI CARRIES */}
-      <section className="py-24 border-t border-white/5 bg-surface-50/30">
+      <section className="py-20 border-t border-white/5 bg-surface-50/30">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
+          <div className="text-center mb-12">
             <p className="text-sm font-medium uppercase tracking-widest text-sky-400 mb-3">
               What your DDI carries
             </p>
             <h2 className="text-3xl sm:text-4xl font-bold text-white">
               The signals that make a car know you
             </h2>
-            <p className="text-gray-400 mt-3 max-w-2xl mx-auto">
-              Verifiable credentials that let any vehicle, any operator, any city instantly
-              understand who you are and what you need.
-            </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
-              { icon: Fingerprint, title: "Identity", desc: "Who you are, verified once, recognized forever." },
-              { icon: Globe, title: "Cross-border licenses", desc: "Driver, international, motorbike, marine &mdash; recognized in every jurisdiction." },
-              { icon: Shield, title: "Portable insurance", desc: "Coverage that follows the person across carriers, vehicles, and modes." },
-              { icon: Accessibility, title: "Accessibility honored", desc: "Wheelchair, low-vision, hearing, or motor needs always respected." },
-              { icon: Bot, title: "AI assistant context", desc: "Tone, language, conversational style &mdash; ready in every cabin." },
-              { icon: Building2, title: "Smart city integration", desc: "Routing, transit credentials, payments &mdash; one tap into infrastructure." },
+              { icon: Fingerprint, title: "Identity", desc: "Verified once, recognized forever." },
+              { icon: Globe, title: "Cross-border licenses", desc: "Recognized in every jurisdiction." },
+              { icon: Shield, title: "Portable insurance", desc: "Coverage that follows the person, not the vehicle." },
+              { icon: Accessibility, title: "Accessibility honored", desc: "Mobility, vision, hearing needs always respected." },
+              { icon: Bot, title: "AI assistant context", desc: "Tone, language, conversational style — ready in every cabin." },
+              { icon: Building2, title: "Smart city integration", desc: "Routing, transit credentials, payments — one tap." },
             ].map(({ icon: Icon, title, desc }) => (
               <div
                 key={title}
@@ -325,70 +309,6 @@ export default function LandingPage() {
                 </div>
                 <h3 className="font-semibold text-white text-base mb-2">{title}</h3>
                 <p className="text-sm text-gray-400 leading-relaxed">{desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* WHY NOW */}
-      <section className="py-24 border-t border-white/5">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
-            <p className="text-sm font-medium uppercase tracking-widest text-sky-400 mb-3">
-              Why now
-            </p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white">
-              The car is becoming software-defined.
-            </h2>
-            <p className="text-gray-400 mt-3 max-w-2xl mx-auto">
-              Every force in the industry is converging to make DDI not just possible &mdash; inevitable.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {[
-              { icon: Zap, label: "EV adoption" },
-              { icon: Bot, label: "Autonomous fleets" },
-              { icon: Network, label: "Connected vehicles" },
-              { icon: Brain, label: "In-cabin AI" },
-              { icon: Cpu, label: "Software-defined OS" },
-              { icon: Users, label: "Shared mobility" },
-              { icon: Fingerprint, label: "Verifiable identity" },
-              { icon: Globe, label: "Global mobility" },
-            ].map(({ icon: Icon, label }) => (
-              <div key={label} className="rounded-xl border border-white/5 bg-surface-50 p-4 text-center">
-                <Icon className="w-5 h-5 text-sky-400 mx-auto mb-2" />
-                <span className="text-xs text-gray-300 font-medium">{label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* PRIVACY */}
-      <section className="py-24 border-t border-white/5 bg-surface-50/30">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <p className="text-sm font-medium uppercase tracking-widest text-sky-400 mb-3">
-              Trust architecture
-            </p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white">Your DDI. Your rules.</h2>
-            <p className="text-gray-400 mt-3 max-w-2xl mx-auto">
-              Personalization without surveillance. Recognition without lock-in.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              { icon: Lock, label: "User-owned credentials" },
-              { icon: Eye, label: "Permission-based sharing" },
-              { icon: CheckCircle2, label: "Verifiable, revocable" },
-              { icon: Shield, label: "End-to-end encrypted" },
-            ].map(({ icon: Icon, label }) => (
-              <div key={label} className="rounded-xl border border-white/5 bg-surface-50 p-5 text-center">
-                <Icon className="w-6 h-6 text-sky-400 mx-auto mb-3" />
-                <span className="text-sm text-gray-300 font-medium">{label}</span>
               </div>
             ))}
           </div>
