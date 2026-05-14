@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
-import { AuthProvider } from "@/lib/auth-context";
+import { PassportProvider } from "@/lib/passport-context";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Futuristic | DDI — Digital Driving Identity",
-  description: "DDI is a portable identity layer that instantly personalizes any connected vehicle. This car knows ME.",
+  title: "Futuristic | The Universal Mobility Passport",
+  description:
+    "DDI is your Universal Mobility Passport. One identity for every vehicle, every border, every mode. This car knows ME.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark">
       <body className="min-h-screen font-sans antialiased">
-        <AuthProvider>{children}</AuthProvider>
+        <PassportProvider>{children}</PassportProvider>
       </body>
     </html>
   );
