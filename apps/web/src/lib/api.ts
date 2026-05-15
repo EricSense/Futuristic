@@ -87,10 +87,11 @@ export const api = {
   revokeDDI: () =>
     apiFetch<void>("/api/ddi/me", { method: "DELETE" }),
 
-  getProfile: () => apiFetch<DriverPreferences & { completeness: number }>("/api/profile"),
+  getProfile: () =>
+    apiFetch<{ profile: DriverPreferences; completeness: number }>("/api/profile"),
 
   updateProfile: (prefs: Partial<DriverPreferences>) =>
-    apiFetch<DriverPreferences>("/api/profile", {
+    apiFetch<{ profile: DriverPreferences; completeness: number }>("/api/profile", {
       method: "PUT",
       body: JSON.stringify(prefs),
     }),

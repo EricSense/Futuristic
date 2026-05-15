@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/navbar";
@@ -21,9 +21,19 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
+  useEffect(() => {
+    if (isAuthenticated) router.replace("/account");
+  }, [isAuthenticated, router]);
+
   if (isAuthenticated) {
-    router.replace("/account");
-    return null;
+    return (
+      <div className="min-h-screen bg-surface">
+        <Navbar />
+        <div>
+          <div className="flex items-center justify-center h-[60vh] text-gray-400">Redirecting…</div>
+        </div>
+      </div>
+    );
   }
 
   async function submit(e: React.FormEvent) {

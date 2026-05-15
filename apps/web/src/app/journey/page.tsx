@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { useDDI, SAMPLE_DDI, type DDI } from "@/lib/ddi-context";
+import { useDDI, SAMPLE_DDI, ddiNeeds, type DDI } from "@/lib/ddi-context";
 import { markJourneyDemoComplete } from "@/lib/demo-progress";
 import { Navbar } from "@/components/navbar";
 import { LogoMark } from "@/components/logo";
@@ -93,7 +93,7 @@ const STOPS: Stop[] = [
       { key: "identity", icon: Fingerprint, title: "Identity verified", detail: (p) => `DDI ${p.id.split("-").slice(0, 2).join("-")}… recognized via biometric handshake` },
       { key: "license", icon: Globe, title: "License attached", detail: () => "California Driver License accepted by Waymo" },
       { key: "insurance", icon: Shield, title: "Insurance auto-bound", detail: (p) => `${p.insurance[0]?.carrier} rideshare policy active` },
-      { key: "accessibility", icon: Accessibility, title: "Accessibility profile loaded", detail: (p) => p.accessibility.mobility === "wheelchair" ? "Wheelchair-accessible vehicle dispatched, ramp deployed" : "Cabin layout matched to profile" },
+      { key: "accessibility", icon: Accessibility, title: "Accessibility profile loaded", detail: (p) => ddiNeeds(p).mobility === "wheelchair" ? "Wheelchair-accessible vehicle dispatched, ramp deployed" : "Cabin layout matched to profile" },
       { key: "ai-assistant", icon: Bot, title: "AI assistant briefed", detail: (p) => `Tone: ${p.aiPersona.tone}. Morning context loaded.` },
     ],
     outcome: () => "Vehicle adapted to you in 1.2s. Zero apps. Zero typing.",
@@ -113,7 +113,7 @@ const STOPS: Stop[] = [
       { key: "identity", icon: Fingerprint, title: "Transit credential verified", detail: () => "BART recognized your DDI as a permitted rider" },
       { key: "payment", icon: Wallet, title: "Fare auto-charged", detail: (p) => `Charged to ${p.payment.primary}` },
       { key: "smart-city", icon: Building2, title: "Smart city handoff", detail: () => "Connected city routing optimized your transfer" },
-      { key: "accessibility", icon: Accessibility, title: "Accessible path lit", detail: (p) => p.accessibility.mobility ? "Elevator route highlighted, wide gate opened" : "Standard route confirmed" },
+      { key: "accessibility", icon: Accessibility, title: "Accessible path lit", detail: (p) => ddiNeeds(p).mobility ? "Elevator route highlighted, wide gate opened" : "Standard route confirmed" },
     ],
     outcome: () => "Tap → ride. Routing knew where you're going next.",
   },
@@ -131,7 +131,7 @@ const STOPS: Stop[] = [
     events: [
       { key: "border", icon: Globe, title: "Cross-border identity verified", detail: () => "TSA + Japan immigration pre-cleared via DDI federation" },
       { key: "insurance", icon: Shield, title: "Travel insurance auto-extended", detail: (p) => `${p.insurance[1]?.carrier ?? p.insurance[0].carrier} extended to JP for 14 days` },
-      { key: "accessibility", icon: Accessibility, title: "Accessibility relay sent", detail: (p) => p.accessibility.mobility ? "ANA cabin crew briefed: wheelchair user, aisle assistance" : "ANA cabin: standard seating preferences shared" },
+      { key: "accessibility", icon: Accessibility, title: "Accessibility relay sent", detail: (p) => ddiNeeds(p).mobility ? "ANA cabin crew briefed: wheelchair user, aisle assistance" : "ANA cabin: standard seating preferences shared" },
       { key: "language", icon: Languages, title: "Language switch staged", detail: (p) => p.languages.includes("ja") ? "AI assistant pre-warmed in Japanese" : "Japanese translation layer attached" },
     ],
     outcome: () => "Border crossed in 8 seconds. No forms. No re-verification.",
@@ -150,7 +150,7 @@ const STOPS: Stop[] = [
     events: [
       { key: "identity", icon: Fingerprint, title: "International recognition", detail: (p) => `DDI verified by ZMP via cross-carrier federation. No app installed.` },
       { key: "insurance", icon: Shield, title: "Reciprocal coverage active", detail: (p) => `${p.insurance[0].carrier} valid in Japan via carrier reciprocity` },
-      { key: "accessibility", icon: Accessibility, title: "Accessibility honored", detail: (p) => p.accessibility.mobility ? "Ramp deployed before you arrive" : "Cabin pre-configured" },
+      { key: "accessibility", icon: Accessibility, title: "Accessibility honored", detail: (p) => ddiNeeds(p).mobility ? "Ramp deployed before you arrive" : "Cabin pre-configured" },
       { key: "ai-assistant", icon: Bot, title: "AI assistant in Japanese", detail: (p) => p.languages.includes("ja") ? "Native Japanese, your tone preserved" : "Real-time interpretation, your tone preserved" },
     ],
     outcome: () => "Welcome to Tokyo. The car already knew you.",

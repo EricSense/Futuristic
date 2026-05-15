@@ -30,10 +30,10 @@ export default function AccountPage() {
     if (!isAuthenticated) return;
     api
       .getProfile()
-      .then((p) => {
-        const t = p.climateConfig?.temperature;
+      .then(({ profile }) => {
+        const t = profile.climateConfig?.temperature;
         if (typeof t === "number") setClimateTemp(t);
-        const pos = p.seatConfig?.position;
+        const pos = profile.seatConfig?.position;
         if (typeof pos === "number") setSeatPosition(pos);
       })
       .catch(() => {});

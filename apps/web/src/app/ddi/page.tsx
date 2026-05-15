@@ -61,7 +61,7 @@ export default function DDIPage() {
     return <CreateView onCreated={() => router.push("/ddi")} create={create} />;
   }
 
-  return <DDIView ddi={ddi} onRevoke={() => { revoke(); router.push("/"); }} />;
+  return <DDIView ddi={ddi} onRevoke={() => { void revoke(); router.push("/"); }} />;
 }
 
 // ============== CREATE VIEW ==============

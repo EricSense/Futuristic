@@ -24,6 +24,7 @@ export default function VehicleConsolePage() {
   const [vehicleLabel, setVehicleLabel] = useState<string>("");
   const [log, setLog] = useState<string[]>([]);
   const [syncSummary, setSyncSummary] = useState<string>("");
+  const [startError, setStartError] = useState("");
 
   const canStart = !!vehicleId.trim() && !!apiKey.trim();
 
@@ -37,8 +38,6 @@ export default function VehicleConsolePage() {
     setSyncSummary("");
     setLog([]);
   };
-
-  const [startError, setStartError] = useState("");
 
   const start = async () => {
     reset();

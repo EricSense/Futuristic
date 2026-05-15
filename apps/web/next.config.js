@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ["@futuristic/shared", "@futuristic/ddi-sdk"],
+  transpilePackages: ["@futuristic/shared"],
   output: "standalone",
   // Allow NEXT_PUBLIC_API_URL to be set at build time via Vercel env vars.
   // Default falls back to localhost for local dev.

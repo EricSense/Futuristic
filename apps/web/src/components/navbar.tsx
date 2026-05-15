@@ -25,7 +25,7 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
 
   const handleRevoke = () => {
-    revoke();
+    void revoke();
     setOpen(false);
     router.push("/");
   };

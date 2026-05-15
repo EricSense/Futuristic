@@ -197,6 +197,11 @@ export function useDDI() {
   return ctx;
 }
 
+/** Identity needs block used across demos (mobility, vision, hearing, etc.) */
+export function ddiNeeds(p: DDI): DDIMobilityNeeds {
+  return p.mobilityNeeds ?? p.accessibility ?? {};
+}
+
 /** @deprecated use buildDDI via API issue */
 export function buildDDI(input: CreateDDIInput): DDI {
   return {

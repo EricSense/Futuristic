@@ -1,4 +1,4 @@
-export * from "./ddi.js";
+export * from "./ddi";
 
 export type UserRole = "DRIVER" | "OWNER" | "FLEET_OPERATOR" | "ADMIN";
 

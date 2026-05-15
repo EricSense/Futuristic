@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useDDI, SAMPLE_DDI, type DDI } from "@/lib/ddi-context";
+import { useDDI, SAMPLE_DDI, ddiNeeds, type DDI } from "@/lib/ddi-context";
 import { useAuth } from "@/lib/auth-context";
 import { markRecognizeDemoComplete } from "@/lib/demo-progress";
 import { Navbar } from "@/components/navbar";
@@ -67,7 +67,7 @@ const FACTS: FactCard[] = [
     icon: Accessibility,
     label: "Needs honored",
     value: (p) => {
-      const k = Object.entries(p.accessibility);
+      const k = Object.entries(ddiNeeds(p));
       if (k.length === 0) return "No special needs declared";
       return k.map(([k, v]) => `${cap(k)}: ${cap(String(v))}`).join(" · ");
     },
