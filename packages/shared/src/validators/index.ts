@@ -95,6 +95,35 @@ export const syncRequestSchema = z.object({
   vehicleId: z.string().uuid("Invalid vehicle ID"),
 });
 
+export const mobilityNeedsSchema = z.object({
+  mobility: z.string().optional(),
+  vision: z.string().optional(),
+  hearing: z.string().optional(),
+  communication: z.string().optional(),
+});
+
+export const issueDDISchema = z.object({
+  holderName: z.string().min(1).max(100),
+  homeCity: z.string().min(1).max(120),
+  mobilityNeeds: mobilityNeedsSchema.optional(),
+  languages: z.array(z.string().min(2).max(5)).min(1).optional(),
+  aiPersona: z.enum(["concise", "warm", "playful"]).optional(),
+});
+
+export const updateDDISchema = issueDDISchema.partial();
+
+export const federationChallengeSchema = z.object({
+  vehicleId: z.string().uuid("Invalid vehicle ID"),
+});
+
+export const federationPresentSchema = z.object({
+  challenge: z.string().min(16, "Invalid challenge"),
+});
+
+export const federationVerifySchema = z.object({
+  challenge: z.string().min(16, "Invalid challenge"),
+});
+
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type DriverProfileInput = z.infer<typeof driverProfileSchema>;
@@ -102,3 +131,5 @@ export type VehicleInput = z.infer<typeof vehicleSchema>;
 export type VehicleCapabilityInput = z.infer<typeof vehicleCapabilitySchema>;
 export type FleetInput = z.infer<typeof fleetSchema>;
 export type SyncRequestInput = z.infer<typeof syncRequestSchema>;
+export type IssueDDIInput = z.infer<typeof issueDDISchema>;
+export type UpdateDDIInput = z.infer<typeof updateDDISchema>;

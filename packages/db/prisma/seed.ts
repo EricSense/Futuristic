@@ -72,15 +72,40 @@ async function main() {
     },
   });
 
+  await prisma.digitalDrivingIdentity.upsert({
+    where: { userId: demoDriver.id },
+    update: {},
+    create: {
+      ddiCode: "DDI-7K9F-4M2X-LP3R-WQ8N",
+      userId: demoDriver.id,
+      holderName: "Alex Rivera",
+      homeCity: "San Francisco, USA",
+      mobilityNeeds: { voiceControl: true, parkingAssist: true },
+      languages: ["en", "es"],
+      aiPersona: { tone: "warm" },
+      licenses: [
+        { type: "Driver License", issuer: "California DMV", verified: true },
+        { type: "International Driving Permit", issuer: "AAA", verified: true },
+      ],
+      insurance: [
+        { carrier: "Lemonade Universal", coverage: "global", verified: true },
+      ],
+      trustedNetworks: ["Waymo", "BART Bay Area", "Lime", "TSA PreCheck"],
+      trustScore: 982,
+      payment: { primary: "Mobility Wallet **** 4242" },
+    },
+  });
+
   const vehicle1 = await prisma.vehicle.upsert({
     where: { vin: "5YJ3E1EA1PF000001" },
-    update: {},
+    update: { externalId: "WAYMO-7K" },
     create: {
       ownerId: demoOwner.id,
       make: "Tesla",
       model: "Model 3",
       year: 2025,
       vin: "5YJ3E1EA1PF000001",
+      externalId: "WAYMO-7K",
       status: VehicleStatus.ACTIVE,
       capabilities: {
         create: [
@@ -215,10 +240,12 @@ async function main() {
   });
 
   console.log("Seeded vehicles:", {
-    vehicle1: `${vehicle1.make} ${vehicle1.model}`,
-    vehicle2: `${vehicle2.make} ${vehicle2.model}`,
+    vehicle1: { id: vehicle1.id, label: `${vehicle1.make} ${vehicle1.model}`, externalId: "WAYMO-7K" },
+    vehicle2: { id: vehicle2.id, label: `${vehicle2.make} ${vehicle2.model}` },
   });
 
+  console.log("Demo DDI:", { code: "DDI-7K9F-4M2X-LP3R-WQ8N", driver: demoDriver.email });
+  console.log("Set NEXT_PUBLIC_DEMO_VEHICLE_ID=" + vehicle1.id);
   console.log("Database seeded successfully!");
 }
 

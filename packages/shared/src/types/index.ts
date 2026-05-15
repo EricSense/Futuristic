@@ -1,3 +1,5 @@
+export * from "./ddi.js";
+
 export type UserRole = "DRIVER" | "OWNER" | "FLEET_OPERATOR" | "ADMIN";
 
 export interface AuthTokens {

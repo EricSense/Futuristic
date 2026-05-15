@@ -3,11 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useDDI, SAMPLE_DDI, type DDI } from "@/lib/ddi-context";
+import { useAuth } from "@/lib/auth-context";
 import { markRecognizeDemoComplete } from "@/lib/demo-progress";
 import { Navbar } from "@/components/navbar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { api } from "@/lib/api";
 import {
   Car,
   Fingerprint,
@@ -95,12 +98,16 @@ function greetingFor(p: DDI): string {
 }
 
 export default function RecognizePage() {
+  const { isAuthenticated } = useAuth();
   const { ddi } = useDDI();
   const activeDDI = ddi ?? SAMPLE_DDI;
 
   const [phase, setPhase] = useState<Phase>("idle");
   const [distance, setDistance] = useState(100); // 100% = far, 0% = inside
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const [challenge, setChallenge] = useState("");
+  const [presenting, setPresenting] = useState(false);
+  const [presentError, setPresentError] = useState("");
 
   useEffect(() => () => clearAllTimers(), []);
 
@@ -141,6 +148,21 @@ export default function RecognizePage() {
     clearAllTimers();
     setPhase("idle");
     setDistance(100);
+    setPresenting(false);
+    setPresentError("");
+  };
+
+  const presentToVehicle = async () => {
+    if (!challenge.trim()) return;
+    setPresentError("");
+    setPresenting(true);
+    try {
+      await api.federationPresent(challenge.trim());
+      start();
+    } catch (e) {
+      setPresentError(e instanceof Error ? e.message : "Could not present DDI");
+      setPresenting(false);
+    }
   };
 
   const phaseIdx = PHASE_INDEX[phase];
@@ -287,16 +309,47 @@ export default function RecognizePage() {
             </div>
 
             {/* Controls */}
-            <div className="flex items-center justify-center gap-3">
+            <div className="flex flex-col items-center justify-center gap-3">
               {phase === "idle" && (
-                <Button
-                  onClick={start}
-                  size="lg"
-                  className="gap-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 border-0"
-                >
-                  <Play className="w-4 h-4" />
-                  Approach the vehicle
-                </Button>
+                <Card className="border-sky-500/20 bg-surface-50 p-4 w-full max-w-xl">
+                  <p className="text-sm text-white font-semibold mb-1">Present to a real federation challenge</p>
+                  <p className="text-xs text-gray-500 mb-3">
+                    Start a challenge in <Link href="/vehicle" className="text-sky-400">Vehicle console</Link>, then paste the token here.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <Input
+                      value={challenge}
+                      onChange={(e) => setChallenge(e.target.value)}
+                      placeholder="challenge token (base64url)"
+                      className="font-mono"
+                    />
+                    {isAuthenticated ? (
+                      <Button
+                        onClick={presentToVehicle}
+                        disabled={!challenge.trim() || presenting}
+                        className="gap-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 border-0"
+                      >
+                        <Play className="w-4 h-4" />
+                        {presenting ? "Presenting…" : "Present DDI"}
+                      </Button>
+                    ) : (
+                      <Link href="/login" className="sm:self-stretch">
+                        <Button variant="secondary" className="w-full sm:w-auto">Sign in to present</Button>
+                      </Link>
+                    )}
+                  </div>
+                  {presentError && <p className="text-xs text-red-400 mt-2">{presentError}</p>}
+                  <p className="text-[11px] text-gray-600 mt-3">
+                    Just want the animation? You can still{" "}
+                    <button
+                      className="text-sky-400 hover:text-sky-300 font-medium"
+                      onClick={start}
+                      type="button"
+                    >
+                      run a simulated approach
+                    </button>.
+                  </p>
+                </Card>
               )}
               {phase === "welcoming" && (
                 <>

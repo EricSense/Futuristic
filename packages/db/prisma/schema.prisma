@@ -27,6 +27,20 @@ enum SyncStatus {
   FAILED
 }
 
+enum DDIStatus {
+  ACTIVE
+  REVOKED
+  SUSPENDED
+}
+
+enum PresentationStatus {
+  PENDING
+  PRESENTED
+  VERIFIED
+  EXPIRED
+  REJECTED
+}
+
 model User {
   id            String    @id @default(uuid())
   email         String    @unique
@@ -37,11 +51,39 @@ model User {
   updatedAt     DateTime  @updatedAt
 
   driverProfile  DriverProfile?
+  digitalIdentity DigitalDrivingIdentity?
   vehicles       Vehicle[]
   fleetOperator  FleetOperator?
 
   @@index([email])
   @@index([role])
+}
+
+model DigitalDrivingIdentity {
+  id              String    @id @default(uuid())
+  ddiCode         String    @unique
+  userId          String    @unique
+  holderName      String
+  homeCity        String
+  status          DDIStatus @default(ACTIVE)
+  identity        Json      @default("{\"verified\":true,\"biometric\":true}")
+  licenses        Json      @default("[]")
+  insurance       Json      @default("[]")
+  mobilityNeeds   Json      @default("{}")
+  languages       Json      @default("[\"en\"]")
+  payment         Json      @default("{\"primary\":\"Mobility Wallet\"}")
+  aiPersona       Json      @default("{\"tone\":\"concise\"}")
+  trustedNetworks Json      @default("[]")
+  trustScore      Int       @default(900)
+  issuedAt        DateTime  @default(now())
+  revokedAt       DateTime?
+  updatedAt       DateTime  @updatedAt
+
+  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  presentationSessions  PresentationSession[]
+
+  @@index([ddiCode])
+  @@index([status])
 }
 
 model DriverProfile {
@@ -63,23 +105,26 @@ model DriverProfile {
 }
 
 model Vehicle {
-  id        String        @id @default(uuid())
-  ownerId   String
-  make      String
-  model     String
-  year      Int
-  vin       String        @unique
-  status    VehicleStatus @default(ACTIVE)
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  id           String        @id @default(uuid())
+  ownerId      String
+  make         String
+  model        String
+  year         Int
+  vin          String        @unique
+  externalId   String?       @unique
+  status       VehicleStatus @default(ACTIVE)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 
-  owner        User                @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  capabilities VehicleCapability[]
-  fleetVehicles FleetVehicle[]
-  syncSessions SyncSession[]       @relation("VehicleSessions")
+  owner                 User                    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  capabilities          VehicleCapability[]
+  fleetVehicles         FleetVehicle[]
+  syncSessions          SyncSession[]           @relation("VehicleSessions")
+  presentationSessions  PresentationSession[]
 
   @@index([ownerId])
   @@index([vin])
+  @@index([externalId])
   @@index([status])
 }
 
@@ -93,6 +138,28 @@ model VehicleCapability {
 
   @@index([vehicleId])
   @@index([category])
+}
+
+model PresentationSession {
+  id            String             @id @default(uuid())
+  challenge     String             @unique
+  vehicleId     String
+  ddiId         String?
+  status        PresentationStatus @default(PENDING)
+  disclosedFields Json             @default("[]")
+  expiresAt     DateTime
+  presentedAt   DateTime?
+  verifiedAt    DateTime?
+  syncSessionId String?
+  createdAt     DateTime           @default(now())
+
+  vehicle Vehicle                 @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  ddi     DigitalDrivingIdentity? @relation(fields: [ddiId], references: [id], onDelete: SetNull)
+
+  @@index([vehicleId])
+  @@index([ddiId])
+  @@index([status])
+  @@index([expiresAt])
 }
 
 model FleetOperator {

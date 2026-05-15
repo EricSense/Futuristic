@@ -4,9 +4,10 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useDDI } from "@/lib/ddi-context";
+import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { LogoMark } from "@/components/logo";
-import { Fingerprint, Compass, LogOut, Eye, Network, Menu, X, CirclePlay, Building2 } from "lucide-react";
+import { Fingerprint, Compass, LogOut, Eye, Network, Menu, X, CirclePlay, Building2, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
@@ -19,6 +20,7 @@ const NAV_LINKS = [
 
 export function Navbar() {
   const { ddi, revoke } = useDDI();
+  const { isAuthenticated } = useAuth();
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
@@ -51,6 +53,21 @@ export function Navbar() {
               </Link>
             ))}
             <div className="w-px h-5 bg-white/10 mx-2" />
+            {isAuthenticated ? (
+              <Link href="/account">
+                <Button variant="ghost" size="sm" className="gap-1.5">
+                  <User className="w-3.5 h-3.5" />
+                  Account
+                </Button>
+              </Link>
+            ) : (
+              <Link href="/login">
+                <Button variant="ghost" size="sm" className="gap-1.5 text-gray-400 hover:text-white">
+                  <User className="w-3.5 h-3.5" />
+                  Sign in
+                </Button>
+              </Link>
+            )}
             {ddi ? (
               <>
                 <Link href="/ddi">
@@ -109,6 +126,12 @@ export function Navbar() {
               </Link>
             ))}
             <div className="h-px bg-white/5 my-2" />
+            <Link href={isAuthenticated ? "/account" : "/login"} onClick={() => setOpen(false)}>
+              <Button variant="ghost" size="sm" className="w-full justify-start gap-2">
+                <User className="w-4 h-4" />
+                {isAuthenticated ? "Account" : "Sign in"}
+              </Button>
+            </Link>
             <Link href="/ddi" onClick={() => setOpen(false)}>
               <Button variant={ddi ? "ghost" : "primary"} size="sm" className="w-full justify-start gap-2">
                 <Fingerprint className="w-4 h-4" />

@@ -8,6 +8,8 @@ import { profileRouter } from "./routes/profile.js";
 import { vehicleRouter } from "./routes/vehicle.js";
 import { fleetRouter } from "./routes/fleet.js";
 import { syncRouter } from "./routes/sync.js";
+import { ddiRouter } from "./routes/ddi.js";
+import { federationRouter } from "./routes/federation.js";
 
 const app = express();
 const port = process.env.API_PORT || 4000;
@@ -33,6 +35,8 @@ app.use("/api/profile", profileRouter);
 app.use("/api/vehicles", vehicleRouter);
 app.use("/api/fleets", fleetRouter);
 app.use("/api/sync", syncRouter);
+app.use("/api/ddi", ddiRouter);
+app.use("/api/federation", federationRouter);
 
 app.use(errorHandler);
 

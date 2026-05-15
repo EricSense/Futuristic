@@ -8,102 +8,74 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
+import type {
+  DigitalDrivingIdentity,
+  IssueDDIInput,
+  DDIMobilityNeeds,
+  AIPersonaTone,
+} from "@futuristic/shared";
+import { api } from "@/lib/api";
+import { useAuth } from "@/lib/auth-context";
 
-export interface VerifiedCredential {
-  type: string;
-  issuer: string;
-  verified: boolean;
-}
+/** Client-facing DDI shape (matches API + legacy demos) */
+export type DDI = DigitalDrivingIdentity & {
+  /** @deprecated use mobilityNeeds */
+  accessibility?: DDIMobilityNeeds;
+};
 
-export interface DDI {
-  id: string;
-  holderName: string;
-  homeCity: string;
-  issuedAt: string;
-  identity: {
-    verified: boolean;
-    biometric: boolean;
-  };
-  licenses: VerifiedCredential[];
-  insurance: { carrier: string; coverage: "domestic" | "global"; verified: boolean }[];
-  accessibility: {
-    mobility?: string;
-    vision?: string;
-    hearing?: string;
-    communication?: string;
-  };
-  languages: string[];
-  payment: { primary: string };
-  aiPersona: { tone: "concise" | "warm" | "playful" };
-  trustedNetworks: string[];
-  trustScore: number;
-}
+export type CreateDDIInput = IssueDDIInput;
 
-export interface CreateDDIInput {
-  holderName: string;
-  homeCity: string;
-  accessibility?: DDI["accessibility"];
-  languages?: string[];
-  aiPersona?: DDI["aiPersona"]["tone"];
-}
-
-interface DDIContextValue {
+export interface DDIContextValue {
   ddi: DDI | null;
   loading: boolean;
-  create: (input: CreateDDIInput) => DDI;
-  revoke: () => void;
+  apiConnected: boolean;
+  create: (input: CreateDDIInput) => Promise<DDI>;
+  revoke: () => Promise<void>;
+  refresh: () => Promise<void>;
 }
 
 const STORAGE_KEY = "futuristic_ddi_v2";
 
 const DDIContext = createContext<DDIContextValue | null>(null);
 
-function generateDDIId(): string {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  const out: string[] = ["DDI"];
-  for (let s = 0; s < 4; s++) {
-    let g = "";
-    for (let i = 0; i < 4; i++) g += chars[Math.floor(Math.random() * chars.length)];
-    out.push(g);
-  }
-  return out.join("-");
+function toClientDDI(record: DigitalDrivingIdentity): DDI {
+  return {
+    ...record,
+    accessibility: record.mobilityNeeds,
+  };
 }
 
-export function buildDDI(input: CreateDDIInput): DDI {
+function fromLegacyStored(raw: Record<string, unknown>): DDI | null {
+  if (!raw?.holderName) return null;
+  const id = String(raw.id ?? raw.ddiCode ?? "DDI-LOCAL");
   return {
-    id: generateDDIId(),
-    holderName: input.holderName.trim(),
-    homeCity: input.homeCity.trim(),
-    issuedAt: new Date().toISOString(),
-    identity: { verified: true, biometric: true },
-    licenses: [
-      { type: "Driver License", issuer: "California DMV", verified: true },
-      { type: "International Driving Permit", issuer: "AAA", verified: true },
-    ],
-    insurance: [
-      { carrier: "Lemonade Universal", coverage: "global", verified: true },
-      { carrier: "Allianz Travel", coverage: "global", verified: true },
-    ],
-    accessibility: input.accessibility ?? {},
-    languages: input.languages?.length ? input.languages : ["en"],
-    payment: { primary: "Mobility Wallet **** 4242" },
-    aiPersona: { tone: input.aiPersona ?? "concise" },
-    trustedNetworks: [
-      "Waymo",
-      "BART Bay Area",
-      "ANA Airlines",
-      "Tokyo Smart City",
-      "Lime",
-      "TSA PreCheck",
-    ],
-    trustScore: 982,
+    id: String(raw.id ?? id),
+    ddiCode: String(raw.ddiCode ?? id),
+    userId: String(raw.userId ?? "local"),
+    holderName: String(raw.holderName),
+    homeCity: String(raw.homeCity ?? ""),
+    status: "ACTIVE",
+    issuedAt: String(raw.issuedAt ?? new Date().toISOString()),
+    identity: (raw.identity as DDI["identity"]) ?? { verified: true, biometric: true },
+    licenses: (raw.licenses as DDI["licenses"]) ?? [],
+    insurance: (raw.insurance as DDI["insurance"]) ?? [],
+    mobilityNeeds: (raw.mobilityNeeds ?? raw.accessibility ?? {}) as DDIMobilityNeeds,
+    accessibility: (raw.accessibility ?? raw.mobilityNeeds ?? {}) as DDIMobilityNeeds,
+    languages: (raw.languages as string[]) ?? ["en"],
+    payment: (raw.payment as DDI["payment"]) ?? { primary: "Mobility Wallet" },
+    aiPersona: (raw.aiPersona as DDI["aiPersona"]) ?? { tone: "concise" },
+    trustedNetworks: (raw.trustedNetworks as string[]) ?? [],
+    trustScore: Number(raw.trustScore ?? 900),
   };
 }
 
 export const SAMPLE_DDI: DDI = {
-  id: "DDI-7K9F-4M2X-LP3R-WQ8N",
+  id: "sample",
+  ddiCode: "DDI-7K9F-4M2X-LP3R-WQ8N",
+  userId: "sample",
   holderName: "Maya Chen",
   homeCity: "San Francisco, USA",
+  status: "ACTIVE",
   issuedAt: "2026-01-14T09:00:00.000Z",
   identity: { verified: true, biometric: true },
   licenses: [
@@ -114,6 +86,7 @@ export const SAMPLE_DDI: DDI = {
     { carrier: "Lemonade Universal", coverage: "global", verified: true },
     { carrier: "Allianz Travel", coverage: "global", verified: true },
   ],
+  mobilityNeeds: { mobility: "wheelchair", communication: "preferred-text" },
   accessibility: { mobility: "wheelchair", communication: "preferred-text" },
   languages: ["en", "ja"],
   payment: { primary: "Mobility Wallet **** 4242" },
@@ -123,38 +96,98 @@ export const SAMPLE_DDI: DDI = {
 };
 
 export function DDIProvider({ children }: { children: ReactNode }) {
+  const { isAuthenticated } = useAuth();
   const [ddi, setDDI] = useState<DDI | null>(null);
   const [loading, setLoading] = useState(true);
+  const [apiConnected, setApiConnected] = useState(false);
+
+  const loadLocal = useCallback(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) return fromLegacyStored(JSON.parse(stored));
+    } catch {
+      // ignore
+    }
+    return null;
+  }, []);
+
+  const refresh = useCallback(async () => {
+    if (!isAuthenticated) {
+      setDDI(loadLocal());
+      setApiConnected(false);
+      return;
+    }
+    try {
+      const remote = await api.getDDI();
+      setApiConnected(true);
+      if (remote) {
+        const client = toClientDDI(remote);
+        setDDI(client);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(client));
+      } else {
+        setDDI(null);
+      }
+    } catch {
+      setApiConnected(false);
+      setDDI(loadLocal());
+    }
+  }, [isAuthenticated, loadLocal]);
 
   useEffect(() => {
-    try {
-      const stored = typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null;
-      if (stored) setDDI(JSON.parse(stored));
-    } catch {
-      // ignore corrupt storage
-    }
-    setLoading(false);
-  }, []);
+    setLoading(true);
+    refresh().finally(() => setLoading(false));
+  }, [refresh, isAuthenticated]);
 
-  const create = useCallback((input: CreateDDIInput) => {
-    const next = buildDDI(input);
-    if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-    }
-    setDDI(next);
-    return next;
-  }, []);
+  const create = useCallback(
+    async (input: CreateDDIInput) => {
+      if (isAuthenticated) {
+        try {
+          const remote = await api.issueDDI(input);
+          const client = toClientDDI(remote);
+          setDDI(client);
+          setApiConnected(true);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(client));
+          return client;
+        } catch {
+          // fall through to local
+        }
+      }
+      const local: DDI = {
+        ...SAMPLE_DDI,
+        id: crypto.randomUUID(),
+        ddiCode: `DDI-${Date.now().toString(36).toUpperCase()}`,
+        userId: "local",
+        holderName: input.holderName.trim(),
+        homeCity: input.homeCity.trim(),
+        mobilityNeeds: input.mobilityNeeds ?? {},
+        accessibility: input.mobilityNeeds ?? {},
+        languages: input.languages ?? ["en"],
+        aiPersona: { tone: (input.aiPersona ?? "concise") as AIPersonaTone },
+        issuedAt: new Date().toISOString(),
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(local));
+      setDDI(local);
+      return local;
+    },
+    [isAuthenticated],
+  );
 
-  const revoke = useCallback(() => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem(STORAGE_KEY);
-      localStorage.removeItem("futuristic_passport_v1");
+  const revoke = useCallback(async () => {
+    if (isAuthenticated && apiConnected) {
+      try {
+        await api.revokeDDI();
+      } catch {
+        // still clear local
+      }
     }
+    localStorage.removeItem(STORAGE_KEY);
     setDDI(null);
-  }, []);
+  }, [isAuthenticated, apiConnected]);
 
   return (
-    <DDIContext.Provider value={{ ddi, loading, create, revoke }}>{children}</DDIContext.Provider>
+    <DDIContext.Provider value={{ ddi, loading, apiConnected, create, revoke, refresh }}>
+      {children}
+    </DDIContext.Provider>
   );
 }
 
@@ -162,4 +195,21 @@ export function useDDI() {
   const ctx = useContext(DDIContext);
   if (!ctx) throw new Error("useDDI must be used within DDIProvider");
   return ctx;
+}
+
+/** @deprecated use buildDDI via API issue */
+export function buildDDI(input: CreateDDIInput): DDI {
+  return {
+    ...SAMPLE_DDI,
+    id: "local",
+    ddiCode: "DDI-LOCAL",
+    userId: "local",
+    holderName: input.holderName.trim(),
+    homeCity: input.homeCity.trim(),
+    mobilityNeeds: input.mobilityNeeds ?? {},
+    accessibility: input.mobilityNeeds ?? {},
+    languages: input.languages ?? ["en"],
+    aiPersona: { tone: (input.aiPersona ?? "concise") as AIPersonaTone },
+    issuedAt: new Date().toISOString(),
+  };
 }

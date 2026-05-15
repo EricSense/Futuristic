@@ -99,15 +99,19 @@ function CreateView({
       hearing: { hearing: "assisted" },
     };
 
-    setTimeout(() => {
-      create({
-        holderName: name,
-        homeCity: city,
-        accessibility: accMap[accessibility] ?? {},
-        languages: languages.length ? languages : ["en"],
-        aiPersona: persona,
-      });
-      onCreated();
+    setTimeout(async () => {
+      try {
+        await create({
+          holderName: name,
+          homeCity: city,
+          mobilityNeeds: accMap[accessibility] ?? {},
+          languages: languages.length ? languages : ["en"],
+          aiPersona: persona,
+        });
+        onCreated();
+      } finally {
+        setIssuing(false);
+      }
     }, 1100);
   };
 
@@ -238,11 +242,12 @@ function CreateView({
 
 function DDIView({ ddi, onRevoke }: { ddi: DDI; onRevoke: () => void }) {
   const issued = new Date(ddi.issuedAt);
+  const needs = ddi.mobilityNeeds ?? ddi.accessibility ?? {};
   const credentialCount =
     1 +
     ddi.licenses.length +
     ddi.insurance.length +
-    (Object.keys(ddi.accessibility).length > 0 ? 1 : 0) +
+    (Object.keys(needs).length > 0 ? 1 : 0) +
     1 +
     1;
 
@@ -339,11 +344,11 @@ function DDIView({ ddi, onRevoke }: { ddi: DDI; onRevoke: () => void }) {
             ))}
           </CredentialCard>
 
-          <CredentialCard icon={Accessibility} title="Accessibility (always honored)">
-            {Object.entries(ddi.accessibility).length === 0 ? (
+          <CredentialCard icon={Accessibility} title="Needs (always honored)">
+            {Object.entries(needs).length === 0 ? (
               <Row label="Profile" value="No needs declared" verified />
             ) : (
-              Object.entries(ddi.accessibility).map(([k, v]) => (
+              Object.entries(needs).map(([k, v]) => (
                 <Row key={k} label={cap(k)} value={String(v)} verified />
               ))
             )}
