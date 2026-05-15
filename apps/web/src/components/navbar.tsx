@@ -6,10 +6,11 @@ import { useRouter } from "next/navigation";
 import { useDDI } from "@/lib/ddi-context";
 import { Button } from "@/components/ui/button";
 import { LogoMark } from "@/components/logo";
-import { Fingerprint, Compass, LogOut, Eye, Network, Menu, X } from "lucide-react";
+import { Fingerprint, Compass, LogOut, Eye, Network, Menu, X, CirclePlay } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
+  { href: "/demo", label: "Demo", icon: CirclePlay },
   { href: "/recognize", label: "Recognize", icon: Eye },
   { href: "/journey", label: "Journey", icon: Compass },
   { href: "/platform", label: "Platform", icon: Network },

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useDDI, SAMPLE_DDI, type DDI } from "@/lib/ddi-context";
+import { markJourneyDemoComplete } from "@/lib/demo-progress";
 import { Navbar } from "@/components/navbar";
 import { LogoMark } from "@/components/logo";
 import { Button } from "@/components/ui/button";
@@ -208,6 +209,10 @@ export default function JourneyPage() {
   const stopsCompleted = phase === "complete" ? STOPS.length : currentStop;
 
   useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
+
+  useEffect(() => {
+    if (phase === "complete") markJourneyDemoComplete();
+  }, [phase]);
 
   useEffect(() => {
     if (phase !== "live") return;
@@ -538,10 +543,15 @@ export default function JourneyPage() {
               </ul>
             </Card>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 flex-wrap">
               <Button onClick={reset} variant="secondary" size="lg" className="gap-2">
                 <RotateCcw className="w-4 h-4" /> Run again
               </Button>
+              <Link href="/demo">
+                <Button variant="secondary" size="lg" className="gap-2">
+                  Back to walkthrough
+                </Button>
+              </Link>
               <Link href="/ddi">
                 <Button size="lg" className="gap-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 border-0">
                   <Fingerprint className="w-4 h-4" /> {ddi ? "View my DDI" : "Create your own DDI"}

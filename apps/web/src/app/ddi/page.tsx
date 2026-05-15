@@ -219,9 +219,13 @@ function CreateView({
           </form>
 
           <p className="mt-6 text-center text-sm text-gray-400">
-            Just want to see it work?{" "}
+            New to DDI?{" "}
+            <Link href="/demo" className="text-sky-400 hover:text-sky-300 font-medium inline-flex items-center gap-1">
+              Start with the walkthrough <ArrowRight className="w-3 h-3" />
+            </Link>
+            {" · "}
             <Link href="/recognize" className="text-sky-400 hover:text-sky-300 font-medium inline-flex items-center gap-1">
-              Watch a car recognize you with a sample DDI <ArrowRight className="w-3 h-3" />
+              Jump to vehicle demo <ArrowRight className="w-3 h-3" />
             </Link>
           </p>
         </Card>

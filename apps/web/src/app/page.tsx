@@ -23,6 +23,7 @@ import {
   Cpu,
   Zap,
   Users,
+  CirclePlay,
 } from "lucide-react";
 
 export default function LandingPage() {
@@ -56,22 +57,27 @@ export default function LandingPage() {
               </h1>
 
               <p className="mt-6 max-w-xl mx-auto lg:mx-0 text-lg text-gray-400 leading-relaxed">
-                Futuristic is building <span className="text-white font-medium">Digital Driving Identity</span> &mdash; the
-                layer that lets every vehicle instantly understand the person inside.
+                Futuristic is building <span className="text-white font-medium">Digital Driving Identity</span> for the
+                future of mobility &mdash; the layer that lets every vehicle instantly understand the person inside.
               </p>
 
-              <div className="mt-8 flex flex-col sm:flex-row items-center lg:items-start lg:justify-start justify-center gap-3">
-                <Link href="/recognize">
+              <div className="mt-8 flex flex-col sm:flex-row items-center lg:items-start lg:justify-start justify-center gap-3 flex-wrap">
+                <Link href="/demo">
                   <Button
                     size="lg"
                     className="gap-2 text-base px-7 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 border-0"
                   >
-                    <Eye className="w-5 h-5" /> See full prototype
+                    How it works &amp; demo <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </Link>
+                <Link href="/recognize">
+                  <Button variant="secondary" size="lg" className="gap-2 text-base px-7">
+                    <Eye className="w-5 h-5" /> Vehicle prototype
                   </Button>
                 </Link>
                 <Link href="/platform">
-                  <Button variant="secondary" size="lg" className="gap-2 text-base px-7">
-                    Build with us <ArrowRight className="w-4 h-4" />
+                  <Button variant="ghost" size="lg" className="gap-2 text-base px-7 text-sky-300 hover:text-white">
+                    Build with us
                   </Button>
                 </Link>
               </div>
@@ -112,18 +118,25 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* THREE PROTOTYPES */}
+      {/* PROTOTYPES */}
       <section className="py-20 border-t border-white/5">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <p className="text-sm font-medium uppercase tracking-widest text-sky-400 mb-3">
-              Three live prototypes
+              Start here
             </p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white">Experience DDI</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-white">How DDI works &mdash; then try it</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {[
+              {
+                href: "/demo",
+                icon: CirclePlay,
+                title: "Walkthrough",
+                desc: "Protocol simulation, mini recognition, and a step-by-step guide: create DDI, recognize, journey.",
+                cta: "Open the demo hub",
+              },
               {
                 href: "/recognize",
                 icon: Eye,
@@ -356,6 +369,9 @@ export default function LandingPage() {
               </span>
             </div>
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-gray-500 justify-center">
+              <Link href="/demo" className="hover:text-white transition-colors">
+                Demo
+              </Link>
               <Link href="/recognize" className="hover:text-white transition-colors">
                 Recognize
               </Link>

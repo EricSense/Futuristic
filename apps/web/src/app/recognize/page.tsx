@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useDDI, SAMPLE_DDI, type DDI } from "@/lib/ddi-context";
+import { markRecognizeDemoComplete } from "@/lib/demo-progress";
 import { Navbar } from "@/components/navbar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -102,6 +103,10 @@ export default function RecognizePage() {
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   useEffect(() => () => clearAllTimers(), []);
+
+  useEffect(() => {
+    if (phase === "welcoming") markRecognizeDemoComplete();
+  }, [phase]);
 
   const clearAllTimers = () => {
     timersRef.current.forEach((t) => clearTimeout(t));

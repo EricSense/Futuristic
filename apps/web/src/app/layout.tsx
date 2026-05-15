@@ -5,7 +5,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Futuristic | Digital Driving Identity",
   description:
-    "Futuristic builds DDI — Digital Driving Identity. The future of transportation is not about owning smarter cars. It is about creating cars that instantly understand people.",
+    "Futuristic is building Digital Driving Identity (DDI) for the future of mobility — so every vehicle can instantly understand the person inside. Try the interactive demo.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
