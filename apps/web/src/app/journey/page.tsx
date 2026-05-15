@@ -130,7 +130,7 @@ const STOPS: Stop[] = [
     durationSec: 8,
     events: [
       { key: "border", icon: Globe, title: "Cross-border identity verified", detail: () => "TSA + Japan immigration pre-cleared via DDI federation" },
-      { key: "insurance", icon: Shield, title: "Travel insurance auto-extended", detail: (p) => `${p.insurance[1]?.carrier ?? p.insurance[0].carrier} extended to JP for 14 days` },
+      { key: "insurance", icon: Shield, title: "Travel insurance auto-extended", detail: (p) => `${p.insurance[1]?.carrier ?? p.insurance[0]?.carrier ?? "Carrier"} extended to JP for 14 days` },
       { key: "accessibility", icon: Accessibility, title: "Accessibility relay sent", detail: (p) => ddiNeeds(p).mobility ? "ANA cabin crew briefed: wheelchair user, aisle assistance" : "ANA cabin: standard seating preferences shared" },
       { key: "language", icon: Languages, title: "Language switch staged", detail: (p) => p.languages.includes("ja") ? "AI assistant pre-warmed in Japanese" : "Japanese translation layer attached" },
     ],
@@ -149,7 +149,7 @@ const STOPS: Stop[] = [
     durationSec: 1.4,
     events: [
       { key: "identity", icon: Fingerprint, title: "International recognition", detail: (p) => `DDI verified by ZMP via cross-carrier federation. No app installed.` },
-      { key: "insurance", icon: Shield, title: "Reciprocal coverage active", detail: (p) => `${p.insurance[0].carrier} valid in Japan via carrier reciprocity` },
+      { key: "insurance", icon: Shield, title: "Reciprocal coverage active", detail: (p) => `${p.insurance[0]?.carrier ?? "Insurance"} valid in Japan via carrier reciprocity` },
       { key: "accessibility", icon: Accessibility, title: "Accessibility honored", detail: (p) => ddiNeeds(p).mobility ? "Ramp deployed before you arrive" : "Cabin pre-configured" },
       { key: "ai-assistant", icon: Bot, title: "AI assistant in Japanese", detail: (p) => p.languages.includes("ja") ? "Native Japanese, your tone preserved" : "Real-time interpretation, your tone preserved" },
     ],

@@ -385,7 +385,7 @@ export default function RecognizePage() {
                       &ldquo;{greetingFor(activeDDI)}&rdquo;
                     </p>
                     <p className="text-xs text-gray-500 mt-2">
-                      Spoken in <span className="text-gray-300">{activeDDI.languages[0].toUpperCase()}</span> ·
+                      Spoken in <span className="text-gray-300">{(activeDDI.languages[0] ?? "en").toUpperCase()}</span> ·
                       Tone: <span className="text-gray-300">{cap(activeDDI.aiPersona.tone)}</span>
                     </p>
                   </div>

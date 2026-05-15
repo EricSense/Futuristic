@@ -131,5 +131,3 @@ export type VehicleInput = z.infer<typeof vehicleSchema>;
 export type VehicleCapabilityInput = z.infer<typeof vehicleCapabilitySchema>;
 export type FleetInput = z.infer<typeof fleetSchema>;
 export type SyncRequestInput = z.infer<typeof syncRequestSchema>;
-export type IssueDDIInput = z.infer<typeof issueDDISchema>;
-export type UpdateDDIInput = z.infer<typeof updateDDISchema>;
