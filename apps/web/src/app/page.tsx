@@ -43,7 +43,7 @@ export default function LandingPage() {
                 <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/20 bg-sky-500/5 px-4 py-1.5">
                   <LogoMark size={18} />
                   <span className="text-xs text-sky-300 font-semibold tracking-wide uppercase">
-                    Futuristic builds DDI
+                    DDI · New mobility paradigm
                   </span>
                 </div>
               </div>
@@ -57,8 +57,10 @@ export default function LandingPage() {
               </h1>
 
               <p className="mt-6 max-w-xl mx-auto lg:mx-0 text-lg text-gray-400 leading-relaxed">
-                Futuristic is building <span className="text-white font-medium">Digital Driving Identity</span> for the
-                future of mobility &mdash; the layer that lets every vehicle instantly understand the person inside.
+                Futuristic is building <span className="text-white font-medium">Digital Driving Identity (DDI)</span> for
+                a new mobility paradigm:{" "}
+                <span className="text-gray-300">not a car you own, but a car that knows you.</span>{" "}
+                We ship the protocols and demos today so the industry can scale recognition tomorrow.
               </p>
 
               <div className="mt-8 flex flex-col sm:flex-row items-center lg:items-start lg:justify-start justify-center gap-3 flex-wrap">
@@ -78,6 +80,11 @@ export default function LandingPage() {
                 <Link href="/platform">
                   <Button variant="ghost" size="lg" className="gap-2 text-base px-7 text-sky-300 hover:text-white">
                     Build with us
+                  </Button>
+                </Link>
+                <Link href="/company">
+                  <Button variant="ghost" size="lg" className="gap-2 text-base px-7 text-gray-400 hover:text-white">
+                    Company &amp; scale
                   </Button>
                 </Link>
               </div>
@@ -128,7 +135,7 @@ export default function LandingPage() {
             <h2 className="text-3xl sm:text-4xl font-bold text-white">How DDI works &mdash; then try it</h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
             {[
               {
                 href: "/demo",
@@ -157,6 +164,13 @@ export default function LandingPage() {
                 title: "Platform",
                 desc: "For OEMs, mobility operators, insurers, and cities. The network, the SDK, the trust architecture.",
                 cta: "Build on DDI",
+              },
+              {
+                href: "/company",
+                icon: Building2,
+                title: "Company",
+                desc: "Mission, how we scale, GTM beachhead, roadmap, and partner path — Futuristic as a startup.",
+                cta: "Why Futuristic wins",
               },
             ].map(({ href, icon: Icon, title, desc, cta }) => (
               <Link
@@ -372,6 +386,9 @@ export default function LandingPage() {
               <Link href="/demo" className="hover:text-white transition-colors">
                 Demo
               </Link>
+              <Link href="/company" className="hover:text-white transition-colors">
+                Company
+              </Link>
               <Link href="/recognize" className="hover:text-white transition-colors">
                 Recognize
               </Link>
@@ -385,7 +402,7 @@ export default function LandingPage() {
                 My DDI
               </Link>
             </div>
-            <p className="text-sm text-gray-600">Cars that instantly understand people.</p>
+            <p className="text-sm text-gray-600">Not a car you own. A car that knows you.</p>
           </div>
         </div>
       </footer>

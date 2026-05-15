@@ -80,9 +80,10 @@ export default function DemoPage() {
             Digital Driving Identity for the future of mobility
           </h1>
           <p className="text-gray-400 max-w-2xl mx-auto leading-relaxed">
-            Futuristic is building DDI so every vehicle can instantly understand the person inside.
-            This page is a working walkthrough: protocol first, then hands-on demos &mdash; no install,
-            no backend required.
+            Futuristic is building <span className="text-white font-medium">Digital Driving Identity (DDI)</span> for a
+            new mobility paradigm &mdash;{" "}
+            <span className="text-gray-300">not a car you own, but a car that knows you.</span> This walkthrough is a
+            working prototype: protocol first, then hands-on demos. No install, no backend required.
           </p>
         </div>
 

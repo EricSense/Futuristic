@@ -1,8 +1,22 @@
-# Futuristic - Digital Driving Identity Platform
+# Futuristic — Digital Driving Identity (DDI)
 
-> "The car doesn't define you. You define the car."
+> **New mobility paradigm:** not a car you own, but a car that knows you.
 
-Futuristic separates your driving identity from any physical vehicle. Your preferences, comfort settings, and accessibility needs follow you into every car you enter.
+Futuristic is building **Digital Driving Identity (DDI)** so every vehicle can instantly understand the person inside — with a path to scale as a company: federation, SDKs, B2B2C motion, and design-partner pilots.
+
+## Product (web)
+
+| Route | Purpose |
+|-------|---------|
+| `/` | Landing — paradigm, insight, links |
+| `/demo` | Interactive handshake + how-to-use checklist |
+| `/ddi` | Create / view a local prototype DDI |
+| `/recognize` | Vehicle POV recognition demo |
+| `/journey` | Multi-mode, multi-operator day demo |
+| `/platform` | Developer & partner integration surface |
+| `/company` | Mission, scale, GTM, roadmap, partners |
+
+Production deploy focuses on static marketing + demos; full API + DB stack is for local/pilot development.
 
 ## Quick Start
 

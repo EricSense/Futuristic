@@ -3,9 +3,9 @@ import { DDIProvider } from "@/lib/ddi-context";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Futuristic | Digital Driving Identity",
+  title: "Futuristic | Digital Driving Identity (DDI)",
   description:
-    "Futuristic is building Digital Driving Identity (DDI) for the future of mobility — so every vehicle can instantly understand the person inside. Try the interactive demo.",
+    "Futuristic is building Digital Driving Identity (DDI) for a new mobility paradigm: not a car you own, but a car that knows you. Product demos, federation, and scale.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

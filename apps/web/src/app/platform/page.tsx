@@ -135,6 +135,20 @@ export default function PlatformPage() {
         </div>
       </section>
 
+      <section className="border-b border-white/5 py-6 bg-sky-950/20">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-sm text-gray-300 text-center sm:text-left">
+            <span className="text-white font-medium">Futuristic the company:</span> mission, scale, GTM, roadmap, and
+            partner path for building DDI as the mobility identity layer.
+          </p>
+          <Link href="/company">
+            <Button variant="secondary" size="sm" className="gap-2 whitespace-nowrap">
+              Read company overview <ArrowRight className="w-4 h-4" />
+            </Button>
+          </Link>
+        </div>
+      </section>
+
       {/* NETWORK STATS BAR */}
       <section className="border-b border-white/5 py-10 bg-surface-50/30">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
