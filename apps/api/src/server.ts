@@ -28,6 +28,14 @@ app.use(
   }),
 );
 
+app.get("/", (_req, res) => {
+  res.json({
+    service: "futuristic-api",
+    message: "This is the API. Deploy apps/web on Vercel for the site UI.",
+    health: "/health",
+  });
+});
+
 app.get("/health", (_req, res) => {
   res.json({ status: "ok", service: "futuristic-api" });
 });

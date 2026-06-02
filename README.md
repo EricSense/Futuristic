@@ -63,3 +63,15 @@ futuristic/
 2. **Owner** — Register vehicles and define capabilities
 3. **Fleet** — Manage vehicle pools, view sync analytics
 4. **Sync** — Engine matches preferences to capabilities, logs sessions
+
+## Deploy to Vercel
+
+`Cannot GET /` means Vercel is serving the **Express API** instead of the **Next.js site**. Fix it in project settings:
+
+1. Open your Vercel project → **Settings** → **General**
+2. Set **Root Directory** to `apps/web`
+3. Set **Environment Variables**:
+   - `NEXT_PUBLIC_API_URL` = your deployed API URL (e.g. `https://your-api.railway.app`)
+4. Redeploy
+
+The web app includes `apps/web/vercel.json` with monorepo build commands. The API is a separate Node server — deploy `apps/api` to Railway, Render, or Fly with `DATABASE_URL` set, then point the web app at it.
