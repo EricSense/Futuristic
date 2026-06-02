@@ -41,6 +41,18 @@ async function refreshAccessToken(): Promise<string | null> {
   }
 }
 
+function withTimeout(init: RequestInit, ms: number) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), ms);
+  const signal = init.signal
+    ? AbortSignal.any([init.signal, controller.signal])
+    : controller.signal;
+  return {
+    init: { ...init, signal },
+    cleanup: () => clearTimeout(timeout),
+  };
+}
+
 export async function apiFetch<T>(
   path: string,
   options: RequestInit & { token?: string; retry?: boolean } = {},
@@ -52,7 +64,8 @@ export async function apiFetch<T>(
   };
   if (token) (headers as Record<string, string>)["Authorization"] = `Bearer ${token}`;
 
-  const res = await fetch(`${API_URL}${path}`, { ...init, headers });
+  const { init: timedInit, cleanup } = withTimeout({ ...init, headers }, 15_000);
+  const res = await fetch(`${API_URL}${path}`, timedInit).finally(cleanup);
 
   if (res.status === 401 && retry && token) {
     const newToken = await refreshAccessToken();
