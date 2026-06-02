@@ -28,11 +28,29 @@ export default function OwnerDashboard() {
   const { logout, getToken, getUser } = useAuth("OWNER");
   const [user, setUser] = useState<ReturnType<typeof getUser>>(null);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [loadError, setLoadError] = useState<string>("");
   const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
-    setUser(getUser());
-    apiFetch<Vehicle[]>("/vehicles", { token: getToken() }).then(setVehicles);
+    let cancelled = false;
+    (async () => {
+      try {
+        setLoadError("");
+        setUser(getUser());
+        const token = getToken();
+        if (!token) {
+          logout();
+          return;
+        }
+        const list = await apiFetch<Vehicle[]>("/vehicles", { token });
+        if (!cancelled) setVehicles(list);
+      } catch (err) {
+        if (!cancelled) setLoadError(err instanceof Error ? err.message : "Failed to load vehicles");
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [getToken, getUser]);
 
   async function handleCreate(e: FormEvent<HTMLFormElement>) {
@@ -67,6 +85,11 @@ export default function OwnerDashboard() {
     <div className="min-h-screen bg-void">
       <DashboardNav role="OWNER" onLogout={logout} />
       <div className="mx-auto max-w-6xl px-6 py-10">
+        {loadError && (
+          <div className="mb-6 rounded-xl border border-border bg-surface p-4 text-sm text-red-300">
+            {loadError}
+          </div>
+        )}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="label">Vehicle Registry</p>

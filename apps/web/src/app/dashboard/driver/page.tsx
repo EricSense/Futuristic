@@ -56,6 +56,7 @@ export default function DriverDashboard() {
   const { logout, getToken, getUser } = useAuth("DRIVER");
   const [user, setUser] = useState<ReturnType<typeof getUser>>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [loadError, setLoadError] = useState<string>("");
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [sessions, setSessions] = useState<SyncSession[]>([]);
   const [syncResult, setSyncResult] = useState<SyncResult | null>(null);
@@ -63,17 +64,33 @@ export default function DriverDashboard() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    setUser(getUser());
-    const token = getToken();
-    Promise.all([
-      apiFetch<Profile>("/profile", { token }),
-      apiFetch<Vehicle[]>("/vehicles/available", { token }),
-      apiFetch<SyncSession[]>("/sync/sessions", { token }),
-    ]).then(([p, v, s]) => {
-      setProfile(p);
-      setVehicles(v);
-      setSessions(s);
-    });
+    let cancelled = false;
+    (async () => {
+      try {
+        setLoadError("");
+        setUser(getUser());
+        const token = getToken();
+        if (!token) {
+          logout();
+          return;
+        }
+        const [p, v, s] = await Promise.all([
+          apiFetch<Profile>("/profile", { token }),
+          apiFetch<Vehicle[]>("/vehicles/available", { token }),
+          apiFetch<SyncSession[]>("/sync/sessions", { token }),
+        ]);
+        if (cancelled) return;
+        setProfile(p);
+        setVehicles(v);
+        setSessions(s);
+      } catch (err) {
+        if (cancelled) return;
+        setLoadError(err instanceof Error ? err.message : "Failed to load identity");
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [getToken]);
 
   async function saveCategory() {
@@ -124,7 +141,20 @@ export default function DriverDashboard() {
   if (!profile) {
     return (
       <div className="flex min-h-screen items-center justify-center text-muted">
-        Loading your identity…
+        {loadError ? (
+          <div className="max-w-md space-y-3 rounded-xl border border-border bg-surface p-6 text-center">
+            <p className="font-medium text-red-300">Couldn’t load your identity</p>
+            <p className="text-sm text-muted">{loadError}</p>
+            <button className="btn-primary w-full" onClick={() => window.location.reload()}>
+              Retry
+            </button>
+            <button className="btn-secondary w-full" onClick={logout}>
+              Sign out
+            </button>
+          </div>
+        ) : (
+          "Loading your identity…"
+        )}
       </div>
     );
   }

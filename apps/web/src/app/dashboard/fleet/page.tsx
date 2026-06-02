@@ -42,6 +42,7 @@ export default function FleetDashboard() {
   const [fleets, setFleets] = useState<Fleet[]>([]);
   const [assignable, setAssignable] = useState<AssignableVehicle[]>([]);
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
+  const [loadError, setLoadError] = useState<string>("");
   const [showForm, setShowForm] = useState(false);
   const [assignFleetId, setAssignFleetId] = useState<string | null>(null);
 
@@ -58,8 +59,25 @@ export default function FleetDashboard() {
   }
 
   useEffect(() => {
-    setUser(getUser());
-    loadData();
+    let cancelled = false;
+    (async () => {
+      try {
+        setLoadError("");
+        setUser(getUser());
+        const token = getToken();
+        if (!token) {
+          logout();
+          return;
+        }
+        await loadData();
+      } catch (err) {
+        if (cancelled) return;
+        setLoadError(err instanceof Error ? err.message : "Failed to load fleet data");
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [getToken, getUser]);
 
   async function handleCreate(e: FormEvent<HTMLFormElement>) {
@@ -89,6 +107,11 @@ export default function FleetDashboard() {
     <div className="min-h-screen bg-void">
       <DashboardNav role="FLEET_OPERATOR" onLogout={logout} />
       <div className="mx-auto max-w-6xl px-6 py-10">
+        {loadError && (
+          <div className="mb-6 rounded-xl border border-border bg-surface p-4 text-sm text-red-300">
+            {loadError}
+          </div>
+        )}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="label">Fleet Operations</p>
