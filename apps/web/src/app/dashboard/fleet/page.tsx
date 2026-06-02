@@ -1,0 +1,140 @@
+"use client";
+
+export const dynamic = "force-dynamic";
+
+import { FormEvent, useEffect, useState } from "react";
+import { DashboardNav, StatCard } from "@/components/ui";
+import { apiFetch } from "@/lib/api";
+import { useAuth } from "@/lib/auth";
+
+interface Fleet {
+  id: string;
+  name: string;
+  vehicles: { id: string; make: string; model: string; year: number }[];
+  _count: { vehicles: number };
+}
+
+interface Analytics {
+  fleetCount: number;
+  vehicleCount: number;
+  totalSessions: number;
+  recentSessions: {
+    id: string;
+    status: string;
+    startedAt: string;
+    vehicle: { make: string; model: string; vin: string };
+    driverProfile: { user: { name: string; email: string } };
+  }[];
+}
+
+export default function FleetDashboard() {
+  const { logout, getToken, getUser } = useAuth("FLEET_OPERATOR");
+  const [user, setUser] = useState<ReturnType<typeof getUser>>(null);
+  const [fleets, setFleets] = useState<Fleet[]>([]);
+  const [analytics, setAnalytics] = useState<Analytics | null>(null);
+  const [showForm, setShowForm] = useState(false);
+
+  useEffect(() => {
+    setUser(getUser());
+    const token = getToken();
+    Promise.all([
+      apiFetch<Fleet[]>("/fleet", { token }),
+      apiFetch<Analytics>("/fleet/analytics", { token }),
+    ]).then(([f, a]) => {
+      setFleets(f);
+      setAnalytics(a);
+    });
+  }, [getToken]);
+
+  async function handleCreate(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = new FormData(e.currentTarget);
+    const fleet = await apiFetch<Fleet>("/fleet", {
+      method: "POST",
+      token: getToken(),
+      body: JSON.stringify({ name: form.get("name") }),
+    });
+    setFleets((f) => [fleet, ...f]);
+    setShowForm(false);
+    e.currentTarget.reset();
+  }
+
+  return (
+    <div className="min-h-screen bg-void">
+      <DashboardNav role="FLEET_OPERATOR" onLogout={logout} />
+      <div className="mx-auto max-w-6xl px-6 py-10">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p className="label">Fleet Operations</p>
+            <h1 className="font-display text-3xl font-bold">{user?.name ?? "Operator"}</h1>
+            <p className="mt-1 text-muted">
+              Identity at scale — every driver at home in every vehicle
+            </p>
+          </div>
+          <button onClick={() => setShowForm(!showForm)} className="btn-primary">
+            {showForm ? "Cancel" : "Create fleet"}
+          </button>
+        </div>
+
+        {analytics && (
+          <div className="mt-10 grid gap-4 sm:grid-cols-3">
+            <StatCard label="Fleets" value={analytics.fleetCount} accent />
+            <StatCard label="Vehicles" value={analytics.vehicleCount} />
+            <StatCard label="Sync sessions" value={analytics.totalSessions} />
+          </div>
+        )}
+
+        {showForm && (
+          <form onSubmit={handleCreate} className="card mt-8 max-w-md">
+            <label className="label">Fleet name</label>
+            <input name="name" required className="input" placeholder="Metro EV Pool" />
+            <button type="submit" className="btn-primary mt-4">
+              Create fleet
+            </button>
+          </form>
+        )}
+
+        <div className="mt-8 grid gap-4 md:grid-cols-2">
+          {fleets.map((f) => (
+            <div key={f.id} className="card">
+              <h3 className="font-display text-xl font-bold">{f.name}</h3>
+              <p className="mt-1 text-sm text-muted">{f._count?.vehicles ?? f.vehicles.length} vehicles</p>
+              <div className="mt-4 space-y-2">
+                {f.vehicles.map((v) => (
+                  <div key={v.id} className="text-sm text-zinc-400">
+                    {v.year} {v.make} {v.model}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {analytics && analytics.recentSessions.length > 0 && (
+          <div className="card mt-8">
+            <h2 className="font-display text-lg font-bold">Recent sync sessions</h2>
+            <p className="mt-1 text-sm text-muted">
+              Drivers meeting vehicles — the core marketplace event
+            </p>
+            <div className="mt-4 divide-y divide-border">
+              {analytics.recentSessions.map((s) => (
+                <div key={s.id} className="flex flex-wrap justify-between gap-2 py-3 text-sm">
+                  <div>
+                    <span className="font-medium">{s.driverProfile.user.name}</span>
+                    <span className="text-muted"> → </span>
+                    <span>
+                      {s.vehicle.make} {s.vehicle.model}
+                    </span>
+                  </div>
+                  <span className="text-muted">
+                    {new Date(s.startedAt).toLocaleDateString()} · {s.status}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

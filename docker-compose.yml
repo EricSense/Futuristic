@@ -1,0 +1,24 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: futuristic
+      POSTGRES_PASSWORD: futuristic
+      POSTGRES_DB: futuristic
+    volumes:
+      - futuristic_pg:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    volumes:
+      - futuristic_redis:/data
+
+volumes:
+  futuristic_pg:
+  futuristic_redis:

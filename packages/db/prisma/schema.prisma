@@ -1,0 +1,133 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  DRIVER
+  OWNER
+  FLEET_OPERATOR
+  ADMIN
+}
+
+enum VehicleStatus {
+  ACTIVE
+  INACTIVE
+  MAINTENANCE
+}
+
+enum SyncStatus {
+  SYNCING
+  ACTIVE
+  COMPLETED
+  FAILED
+}
+
+model User {
+  id           String         @id @default(uuid())
+  email        String         @unique
+  passwordHash String
+  name         String
+  role         UserRole
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  driverProfile DriverProfile?
+  vehicles     Vehicle[]
+  fleetOperator FleetOperator?
+  refreshTokens RefreshToken[]
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model DriverProfile {
+  id                  String              @id @default(uuid())
+  userId              String              @unique
+  user                User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  seatConfig          Json                @default("{}")
+  mirrorConfig        Json                @default("{}")
+  climateConfig       Json                @default("{}")
+  infotainmentConfig  Json                @default("{}")
+  drivingMode         Json                @default("{}")
+  accessibility       Json                @default("{}")
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  syncSessions        SyncSession[]
+}
+
+model Vehicle {
+  id           String              @id @default(uuid())
+  ownerId      String
+  owner        User                @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  make         String
+  model        String
+  year         Int
+  vin          String              @unique
+  status       VehicleStatus       @default(ACTIVE)
+  fleetId      String?
+  fleet        Fleet?              @relation(fields: [fleetId], references: [id])
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  capabilities VehicleCapability[]
+  syncSessions SyncSession[]
+}
+
+model VehicleCapability {
+  id             String  @id @default(uuid())
+  vehicleId      String
+  vehicle        Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  category       String
+  supportedRange Json
+}
+
+model FleetOperator {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company   String?
+  fleets    Fleet[]
+  createdAt DateTime @default(now())
+}
+
+model Fleet {
+  id         String        @id @default(uuid())
+  operatorId String
+  operator   FleetOperator @relation(fields: [operatorId], references: [id], onDelete: Cascade)
+  name       String
+  createdAt  DateTime      @default(now())
+  vehicles   Vehicle[]
+}
+
+model SyncSession {
+  id                 String              @id @default(uuid())
+  driverProfileId    String
+  driverProfile      DriverProfile       @relation(fields: [driverProfileId], references: [id], onDelete: Cascade)
+  vehicleId          String
+  vehicle            Vehicle             @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  status             SyncStatus          @default(SYNCING)
+  syncPlan           Json?
+  startedAt          DateTime            @default(now())
+  endedAt            DateTime?
+  appliedPreferences AppliedPreference[]
+}
+
+model AppliedPreference {
+  id            String      @id @default(uuid())
+  syncSessionId String
+  syncSession   SyncSession @relation(fields: [syncSessionId], references: [id], onDelete: Cascade)
+  category      String
+  key           String
+  value         Json
+  applied       Boolean
+  reason        String?
+}
