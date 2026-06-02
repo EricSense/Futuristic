@@ -16,6 +16,7 @@ const config: Config = {
       fontFamily: {
         sans: ["var(--font-geist)", "system-ui", "sans-serif"],
         display: ["var(--font-display)", "system-ui", "sans-serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
       },
       backgroundImage: {
         "grid-fade":
