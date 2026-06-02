@@ -1,55 +1,17 @@
 import { config } from "dotenv";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { app } from "./app.js";
 
-config({ path: resolve(fileURLToPath(new URL(".", import.meta.url)), "../../../.env") });
+const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
-import cors from "cors";
-import express from "express";
-import { rateLimit } from "express-rate-limit";
-import { authRouter } from "./routes/auth.js";
-import { profileRouter } from "./routes/profile.js";
-import { vehicleRouter } from "./routes/vehicles.js";
-import { fleetRouter } from "./routes/fleet.js";
-import { syncRouter } from "./routes/sync.js";
-import { statusRouter } from "./routes/status.js";
-import { errorHandler } from "./middleware/error-handler.js";
+if (!process.env.VERCEL) {
+  config({ path: resolve(__dirname, "../../../.env") });
+}
 
-const app = express();
-const port = Number(process.env.API_PORT ?? 4000);
+const port = Number(process.env.PORT ?? process.env.API_PORT ?? 4000);
+const host = "0.0.0.0";
 
-app.use(cors({ origin: true, credentials: true }));
-app.use(express.json());
-app.use(
-  rateLimit({
-    windowMs: 60_000,
-    max: 120,
-    standardHeaders: true,
-    legacyHeaders: false,
-  }),
-);
-
-app.get("/", (_req, res) => {
-  res.json({
-    service: "futuristic-api",
-    message: "This is the API. Deploy apps/web on Vercel for the site UI.",
-    health: "/health",
-  });
-});
-
-app.get("/health", (_req, res) => {
-  res.json({ status: "ok", service: "futuristic-api" });
-});
-
-app.use("/auth", authRouter);
-app.use("/profile", profileRouter);
-app.use("/vehicles", vehicleRouter);
-app.use("/fleet", fleetRouter);
-app.use("/sync", syncRouter);
-app.use("/status", statusRouter);
-
-app.use(errorHandler);
-
-app.listen(port, () => {
-  console.log(`Futuristic API listening on http://localhost:${port}`);
+app.listen(port, host, () => {
+  console.log(`Futuristic API listening on http://${host}:${port}`);
 });
