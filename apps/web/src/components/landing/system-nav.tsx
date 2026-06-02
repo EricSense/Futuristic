@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const anchors = [
+  { href: "#demo", label: "DEMO" },
   { href: "#architecture", label: "SYSTEM" },
   { href: "#thesis", label: "THESIS" },
   { href: "#proof", label: "PROOF" },

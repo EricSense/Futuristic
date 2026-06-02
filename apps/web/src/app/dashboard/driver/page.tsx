@@ -91,7 +91,7 @@ export default function DriverDashboard() {
     return () => {
       cancelled = true;
     };
-  }, [getToken]);
+  }, [getToken, getUser, logout]);
 
   async function saveCategory() {
     if (!profile) return;

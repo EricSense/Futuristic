@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import type { AuthUser } from "@/lib/api";
 import { getDashboardPath } from "@/lib/api";
@@ -21,23 +21,23 @@ export function useAuth(requiredRole?: AuthUser["role"]) {
     }
   }, [router, requiredRole]);
 
-  function logout() {
+  const logout = useCallback(() => {
     localStorage.removeItem("futuristic_token");
     localStorage.removeItem("futuristic_refresh");
     localStorage.removeItem("futuristic_user");
     router.push("/login");
-  }
+  }, [router]);
 
-  function getToken() {
+  const getToken = useCallback(() => {
     if (typeof window === "undefined") return "";
     return localStorage.getItem("futuristic_token") ?? "";
-  }
+  }, []);
 
-  function getUser(): AuthUser | null {
+  const getUser = useCallback((): AuthUser | null => {
     if (typeof window === "undefined") return null;
     const raw = localStorage.getItem("futuristic_user");
     return raw ? (JSON.parse(raw) as AuthUser) : null;
-  }
+  }, []);
 
   return { logout, getToken, getUser };
 }

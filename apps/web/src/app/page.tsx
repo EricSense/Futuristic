@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { IDENTITY_LAYERS } from "@futuristic/shared";
+import { DemoVideo } from "@/components/landing/demo-video";
 import { LiveProof, LiveStats } from "@/components/landing/live-status";
 import { Marquee } from "@/components/landing/marquee";
 import { SystemNav } from "@/components/landing/system-nav";
@@ -89,8 +90,8 @@ export default function HomePage() {
               <Link href="/register" className="btn-primary tracking-wide">
                 EXPLORE THE SYSTEM
               </Link>
-              <a href="#proof" className="btn-ghost tracking-wide">
-                VIEW PROOF
+              <a href="#demo" className="btn-ghost tracking-wide">
+                WATCH DEMO
               </a>
             </div>
             <p className="mt-12 font-mono text-[10px] tracking-[0.2em] text-accent/80">
@@ -100,6 +101,8 @@ export default function HomePage() {
         </section>
 
         <Marquee />
+
+        <DemoVideo />
 
         {/* Architecture */}
         <section id="architecture" className="scroll-mt-24 border-b border-border/40 py-24">

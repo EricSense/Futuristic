@@ -51,7 +51,7 @@ export default function OwnerDashboard() {
     return () => {
       cancelled = true;
     };
-  }, [getToken, getUser]);
+  }, [getToken, getUser, logout]);
 
   async function handleCreate(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
