@@ -64,8 +64,16 @@ export async function apiFetch<T>(
   };
   if (token) (headers as Record<string, string>)["Authorization"] = `Bearer ${token}`;
 
-  const { init: timedInit, cleanup } = withTimeout({ ...init, headers }, 15_000);
-  const res = await fetch(`${API_URL}${path}`, timedInit).finally(cleanup);
+  let res: Response;
+  const url = `${API_URL}${path}`;
+  try {
+    const { init: timedInit, cleanup } = withTimeout({ ...init, headers }, 15_000);
+    res = await fetch(url, timedInit).finally(cleanup);
+  } catch (err) {
+    // Browser "Load failed" errors usually surface as TypeError here.
+    const detail = err instanceof Error ? err.message : String(err);
+    throw new Error(`Network error calling ${url}: ${detail}`);
+  }
 
   if (res.status === 401 && retry && token) {
     const newToken = await refreshAccessToken();

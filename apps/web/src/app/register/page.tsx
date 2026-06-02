@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, Suspense, useState } from "react";
 import { Nav } from "@/components/ui";
-import { apiFetch, getRegisterPath, storeTokens, type AuthResponse } from "@/lib/api";
+import { API_URL, apiFetch, getRegisterPath, storeTokens, type AuthResponse } from "@/lib/api";
 
 const roles = [
   { value: "DRIVER", label: "Driver", desc: "Build and sync your driving identity" },
@@ -88,6 +88,7 @@ function RegisterForm() {
           <input id="password" name="password" type="password" minLength={8} required className="input" />
         </div>
         {error && <p className="text-sm text-red-400">{error}</p>}
+        <p className="text-[11px] text-muted">API: {API_URL}</p>
         <button type="submit" disabled={loading} className="btn-primary w-full">
           {loading ? "Creating…" : "Create account"}
         </button>

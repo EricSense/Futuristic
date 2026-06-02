@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { Nav } from "@/components/ui";
-import { apiFetch, getDashboardPath, storeTokens, type AuthResponse } from "@/lib/api";
+import { API_URL, apiFetch, getDashboardPath, storeTokens, type AuthResponse } from "@/lib/api";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -55,6 +55,7 @@ export default function LoginPage() {
             <input id="password" name="password" type="password" required className="input" />
           </div>
           {error && <p className="text-sm text-red-400">{error}</p>}
+          <p className="text-[11px] text-muted">API: {API_URL}</p>
           <button type="submit" disabled={loading} className="btn-primary w-full">
             {loading ? "Signing in…" : "Sign in"}
           </button>
