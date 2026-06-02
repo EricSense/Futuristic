@@ -6,7 +6,7 @@ config({ path: resolve(fileURLToPath(new URL(".", import.meta.url)), "../../../.
 
 import cors from "cors";
 import express from "express";
-import rateLimit from "express-rate-limit";
+import { rateLimit } from "express-rate-limit";
 import { authRouter } from "./routes/auth.js";
 import { profileRouter } from "./routes/profile.js";
 import { vehicleRouter } from "./routes/vehicles.js";
