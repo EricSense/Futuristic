@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "pnpm db:generate && turbo run build",
-    "vercel-build": "pnpm db:generate && turbo run build --filter=@futuristic/web...",
+    "vercel-build": "pnpm db:generate && turbo run build --filter=@futuristic/api...",
     "db:generate": "pnpm --filter @futuristic/db run generate",
     "db:migrate": "pnpm --filter @futuristic/db run migrate",
     "db:seed": "pnpm --filter @futuristic/db run seed",
