@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, Suspense, useState } from "react";
 import { Nav } from "@/components/ui";
-import { apiFetch, getDashboardPath, type AuthResponse } from "@/lib/api";
+import { apiFetch, getRegisterPath, storeTokens, type AuthResponse } from "@/lib/api";
 
 const roles = [
   { value: "DRIVER", label: "Driver", desc: "Build and sync your driving identity" },
@@ -35,10 +35,9 @@ function RegisterForm() {
           role,
         }),
       });
-      localStorage.setItem("futuristic_token", result.accessToken);
-      localStorage.setItem("futuristic_refresh", result.refreshToken);
+      storeTokens(result.accessToken, result.refreshToken);
       localStorage.setItem("futuristic_user", JSON.stringify(result.user));
-      router.push(getDashboardPath(result.user.role));
+      router.push(getRegisterPath(result.user.role));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed");
     } finally {

@@ -1,7 +1,13 @@
 import { Router } from "express";
-import { fleetCreateSchema } from "@futuristic/shared";
+import { fleetAssignSchema, fleetCreateSchema } from "@futuristic/shared";
 import { requireAuth, requireRole } from "../middleware/auth.js";
-import { createFleet, getFleetAnalytics, listFleets } from "../services/vehicle.service.js";
+import {
+  assignVehicleToFleet,
+  createFleet,
+  getFleetAnalytics,
+  listAssignableVehicles,
+  listFleets,
+} from "../services/vehicle.service.js";
 
 export const fleetRouter: Router = Router();
 
@@ -30,6 +36,25 @@ fleetRouter.get("/analytics", async (req, res, next) => {
   try {
     const analytics = await getFleetAnalytics(req.user!.userId);
     res.json(analytics);
+  } catch (err) {
+    next(err);
+  }
+});
+
+fleetRouter.get("/assignable-vehicles", async (_req, res, next) => {
+  try {
+    const vehicles = await listAssignableVehicles();
+    res.json(vehicles);
+  } catch (err) {
+    next(err);
+  }
+});
+
+fleetRouter.post("/:id/assign", async (req, res, next) => {
+  try {
+    const { vehicleId } = fleetAssignSchema.parse(req.body);
+    const vehicle = await assignVehicleToFleet(String(req.params.id), vehicleId, req.user!.userId);
+    res.json(vehicle);
   } catch (err) {
     next(err);
   }

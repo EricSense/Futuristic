@@ -19,4 +19,13 @@ export const fleetCreateSchema = z.object({
 
 export type VehicleCreateInput = z.infer<typeof vehicleCreateSchema>;
 export type CapabilityInput = z.infer<typeof capabilitySchema>;
+export const fleetAssignSchema = z.object({
+  vehicleId: z.string().uuid(),
+});
+
+export const seedCapabilitiesSchema = z.object({
+  template: z.enum(["default"]).optional(),
+});
+
 export type FleetCreateInput = z.infer<typeof fleetCreateSchema>;
+export type FleetAssignInput = z.infer<typeof fleetAssignSchema>;

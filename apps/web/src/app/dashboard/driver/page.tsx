@@ -101,6 +101,10 @@ export default function DriverDashboard() {
       token,
       body: JSON.stringify({ vehicleId }),
     });
+    await apiFetch(`/sync/${result.session.id}/complete`, {
+      method: "POST",
+      token,
+    });
     setSyncResult(result);
     const sessions = await apiFetch<SyncSession[]>("/sync/sessions", { token });
     setSessions(sessions);
@@ -212,8 +216,8 @@ export default function DriverDashboard() {
                   {syncResult.plan.summary.applied} applied · {syncResult.plan.summary.unsupported}{" "}
                   deferred
                 </p>
-                <div className="mt-3 max-h-40 space-y-1 overflow-y-auto font-mono text-xs">
-                  {syncResult.plan.items.slice(0, 8).map((item, i) => (
+                <div className="mt-3 max-h-48 space-y-1 overflow-y-auto font-mono text-xs">
+                  {syncResult.plan.items.map((item, i) => (
                     <div
                       key={i}
                       className={item.applied ? "text-accent" : "text-amber-400/80"}

@@ -24,6 +24,7 @@
     "@prisma/client": "^6.1.0"
   },
   "devDependencies": {
+    "@futuristic/shared": "workspace:*",
     "bcryptjs": "^2.4.3",
     "dotenv-cli": "^8.0.0",
     "prisma": "^6.1.0",

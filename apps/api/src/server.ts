@@ -12,6 +12,7 @@ import { profileRouter } from "./routes/profile.js";
 import { vehicleRouter } from "./routes/vehicles.js";
 import { fleetRouter } from "./routes/fleet.js";
 import { syncRouter } from "./routes/sync.js";
+import { statusRouter } from "./routes/status.js";
 import { errorHandler } from "./middleware/error-handler.js";
 
 const app = express();
@@ -45,6 +46,7 @@ app.use("/profile", profileRouter);
 app.use("/vehicles", vehicleRouter);
 app.use("/fleet", fleetRouter);
 app.use("/sync", syncRouter);
+app.use("/status", statusRouter);
 
 app.use(errorHandler);
 

@@ -53,6 +53,14 @@ export default function OwnerDashboard() {
     e.currentTarget.reset();
   }
 
+  async function seedCapabilities(vehicleId: string) {
+    const updated = await apiFetch<Vehicle>(`/vehicles/${vehicleId}/seed-capabilities`, {
+      method: "POST",
+      token: getToken(),
+    });
+    setVehicles((list) => list.map((v) => (v.id === vehicleId ? updated : v)));
+  }
+
   const activeCount = vehicles.filter((v) => v.status === "ACTIVE").length;
 
   return (
@@ -128,7 +136,7 @@ export default function OwnerDashboard() {
                   {v.status}
                 </span>
               </div>
-              {v.capabilities.length > 0 && (
+              {v.capabilities.length > 0 ? (
                 <div className="mt-4 flex flex-wrap gap-2">
                   {v.capabilities.map((c) => (
                     <span
@@ -139,6 +147,13 @@ export default function OwnerDashboard() {
                     </span>
                   ))}
                 </div>
+              ) : (
+                <button
+                  onClick={() => seedCapabilities(v.id)}
+                  className="btn-ghost mt-4 text-xs"
+                >
+                  Seed default capabilities
+                </button>
               )}
             </div>
           ))}

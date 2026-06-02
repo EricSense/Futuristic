@@ -1,16 +1,13 @@
 import bcrypt from "bcryptjs";
+import { DEFAULT_VEHICLE_CAPABILITIES } from "@futuristic/shared";
 import { PrismaClient, UserRole, VehicleStatus } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const defaultCapabilities = [
-  { category: "seat", supportedRange: { position: { min: 0, max: 100 }, lumbar: { min: 0, max: 10 }, height: { min: 0, max: 100 }, tilt: { min: -30, max: 30 } } },
-  { category: "mirrors", supportedRange: { left: { min: -45, max: 45 }, right: { min: -45, max: 45 }, rearview: { min: -20, max: 20 } } },
-  { category: "climate", supportedRange: { temp: { min: 60, max: 85 }, fan: { min: 0, max: 7 }, zones: ["driver", "passenger"] } },
-  { category: "infotainment", supportedRange: { volume: { min: 0, max: 100 }, sources: ["bluetooth", "carplay", "radio"] } },
-  { category: "drivingMode", supportedRange: { modes: ["eco", "comfort", "sport", "custom"] } },
-  { category: "accessibility", supportedRange: { assists: ["lane-keep", "adaptive-cruise", "blind-spot"], display: ["standard", "high-contrast"] } },
-];
+const defaultCapabilities = DEFAULT_VEHICLE_CAPABILITIES.map((cap) => ({
+  category: cap.category,
+  supportedRange: cap.supportedRange,
+}));
 
 async function main() {
   const passwordHash = await bcrypt.hash("password123", 10);

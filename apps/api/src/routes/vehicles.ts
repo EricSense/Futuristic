@@ -6,6 +6,7 @@ import {
   createVehicle,
   listAvailableVehicles,
   listOwnerVehicles,
+  seedDefaultCapabilities,
 } from "../services/vehicle.service.js";
 
 export const vehicleRouter: Router = Router();
@@ -43,6 +44,15 @@ vehicleRouter.post("/:id/capabilities", requireAuth, requireRole("OWNER"), async
     const input = capabilitySchema.parse(req.body);
     const cap = await addCapability(String(req.params.id), req.user!.userId, input);
     res.status(201).json(cap);
+  } catch (err) {
+    next(err);
+  }
+});
+
+vehicleRouter.post("/:id/seed-capabilities", requireAuth, requireRole("OWNER"), async (req, res, next) => {
+  try {
+    const vehicle = await seedDefaultCapabilities(String(req.params.id), req.user!.userId);
+    res.json(vehicle);
   } catch (err) {
     next(err);
   }

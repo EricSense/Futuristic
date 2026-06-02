@@ -14,6 +14,15 @@ interface Fleet {
   _count: { vehicles: number };
 }
 
+interface AssignableVehicle {
+  id: string;
+  make: string;
+  model: string;
+  year: number;
+  vin: string;
+  owner: { name: string };
+}
+
 interface Analytics {
   fleetCount: number;
   vehicleCount: number;
@@ -31,32 +40,49 @@ export default function FleetDashboard() {
   const { logout, getToken, getUser } = useAuth("FLEET_OPERATOR");
   const [user, setUser] = useState<ReturnType<typeof getUser>>(null);
   const [fleets, setFleets] = useState<Fleet[]>([]);
+  const [assignable, setAssignable] = useState<AssignableVehicle[]>([]);
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [assignFleetId, setAssignFleetId] = useState<string | null>(null);
+
+  async function loadData() {
+    const token = getToken();
+    const [f, a, pool] = await Promise.all([
+      apiFetch<Fleet[]>("/fleet", { token }),
+      apiFetch<Analytics>("/fleet/analytics", { token }),
+      apiFetch<AssignableVehicle[]>("/fleet/assignable-vehicles", { token }),
+    ]);
+    setFleets(f);
+    setAnalytics(a);
+    setAssignable(pool);
+  }
 
   useEffect(() => {
     setUser(getUser());
-    const token = getToken();
-    Promise.all([
-      apiFetch<Fleet[]>("/fleet", { token }),
-      apiFetch<Analytics>("/fleet/analytics", { token }),
-    ]).then(([f, a]) => {
-      setFleets(f);
-      setAnalytics(a);
-    });
-  }, [getToken]);
+    loadData();
+  }, [getToken, getUser]);
 
   async function handleCreate(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
-    const fleet = await apiFetch<Fleet>("/fleet", {
+    await apiFetch<Fleet>("/fleet", {
       method: "POST",
       token: getToken(),
       body: JSON.stringify({ name: form.get("name") }),
     });
-    setFleets((f) => [fleet, ...f]);
+    await loadData();
     setShowForm(false);
     e.currentTarget.reset();
+  }
+
+  async function assignVehicle(fleetId: string, vehicleId: string) {
+    await apiFetch(`/fleet/${fleetId}/assign`, {
+      method: "POST",
+      token: getToken(),
+      body: JSON.stringify({ vehicleId }),
+    });
+    setAssignFleetId(null);
+    await loadData();
   }
 
   return (
@@ -97,8 +123,20 @@ export default function FleetDashboard() {
         <div className="mt-8 grid gap-4 md:grid-cols-2">
           {fleets.map((f) => (
             <div key={f.id} className="card">
-              <h3 className="font-display text-xl font-bold">{f.name}</h3>
-              <p className="mt-1 text-sm text-muted">{f._count?.vehicles ?? f.vehicles.length} vehicles</p>
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h3 className="font-display text-xl font-bold">{f.name}</h3>
+                  <p className="mt-1 text-sm text-muted">
+                    {f._count?.vehicles ?? f.vehicles.length} vehicles
+                  </p>
+                </div>
+                <button
+                  onClick={() => setAssignFleetId(assignFleetId === f.id ? null : f.id)}
+                  className="btn-ghost text-xs"
+                >
+                  {assignFleetId === f.id ? "Close" : "Add vehicle"}
+                </button>
+              </div>
               <div className="mt-4 space-y-2">
                 {f.vehicles.map((v) => (
                   <div key={v.id} className="text-sm text-zinc-400">
@@ -106,6 +144,26 @@ export default function FleetDashboard() {
                   </div>
                 ))}
               </div>
+              {assignFleetId === f.id && (
+                <div className="mt-4 space-y-2 border-t border-border/40 pt-4">
+                  {assignable.length === 0 ? (
+                    <p className="text-xs text-muted">No unassigned vehicles available</p>
+                  ) : (
+                    assignable.map((v) => (
+                      <button
+                        key={v.id}
+                        onClick={() => assignVehicle(f.id, v.id)}
+                        className="flex w-full items-center justify-between rounded border border-border bg-surface px-3 py-2 text-left text-sm hover:border-glow/40"
+                      >
+                        <span>
+                          {v.year} {v.make} {v.model}
+                        </span>
+                        <span className="text-xs text-muted">{v.owner.name}</span>
+                      </button>
+                    ))
+                  )}
+                </div>
+              )}
             </div>
           ))}
         </div>

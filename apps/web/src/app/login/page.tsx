@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { Nav } from "@/components/ui";
-import { apiFetch, getDashboardPath, type AuthResponse } from "@/lib/api";
+import { apiFetch, getDashboardPath, storeTokens, type AuthResponse } from "@/lib/api";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -24,8 +24,7 @@ export default function LoginPage() {
           password: form.get("password"),
         }),
       });
-      localStorage.setItem("futuristic_token", result.accessToken);
-      localStorage.setItem("futuristic_refresh", result.refreshToken);
+      storeTokens(result.accessToken, result.refreshToken);
       localStorage.setItem("futuristic_user", JSON.stringify(result.user));
       router.push(getDashboardPath(result.user.role));
     } catch (err) {

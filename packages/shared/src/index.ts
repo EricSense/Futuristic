@@ -1,3 +1,4 @@
+export * from "./constants/capabilities.js";
 export * from "./types/index.js";
 export * from "./validators/auth.js";
 export * from "./validators/profile.js";

@@ -1,44 +1,19 @@
 import Link from "next/link";
+import { IDENTITY_LAYERS } from "@futuristic/shared";
+import { LiveProof, LiveStats } from "@/components/landing/live-status";
 import { Marquee } from "@/components/landing/marquee";
 import { SystemNav } from "@/components/landing/system-nav";
 
-const identityLayers = [
-  {
-    id: "LAYER_01",
-    name: "BIOMETRIC CORE",
-    status: "SYNCING",
-    statusColor: "text-accent",
-    detail:
-      "Physiological fingerprint. The irreducible you — voice, gait, pulse cadence mapped to a living signature that cannot be replicated.",
-    metric: "94% fidelity",
-  },
-  {
-    id: "LAYER_02",
-    name: "BEHAVIORAL MESH",
-    status: "LIVE",
-    statusColor: "text-emerald-400",
-    detail:
-      "Patterns of preference, rhythm of routine — captured across 128 behavioral dimensions and compressed into your living model.",
-    metric: "71% calibrated",
-  },
-  {
-    id: "LAYER_03",
-    name: "CONTEXTUAL FIELD",
-    status: "PENDING",
-    statusColor: "text-amber-400",
-    detail:
-      "The environment adapts before you ask. Ambient intelligence calibrated to your presence in real time across every surface.",
-    metric: "38% deployed",
-  },
+const layerMeta = [
+  { status: "SYNCING", statusColor: "text-accent", metric: "Seat · Mirrors" },
+  { status: "LIVE", statusColor: "text-emerald-400", metric: "Climate · Mode · Audio" },
+  { status: "PENDING", statusColor: "text-amber-400", metric: "Assists · Display" },
 ];
 
-const stats = [
-  { value: "4.2B", label: "IDENTITY EVENTS / DAY" },
-  { value: "0.3ms", label: "RECOGNITION LATENCY" },
-  { value: "128", label: "BEHAVIORAL DIMENSIONS" },
-  { value: "99.97%", label: "ACCURACY INDEX" },
-  { value: "∞", label: "SCALE POTENTIAL" },
-];
+const identityLayers = IDENTITY_LAYERS.map((layer, i) => ({
+  ...layer,
+  ...layerMeta[i]!,
+}));
 
 const domains = [
   {
@@ -158,22 +133,16 @@ export default function HomePage() {
                     {layer.name}
                   </h3>
                   <p className="mt-3 text-sm leading-relaxed text-zinc-400">{layer.detail}</p>
-                  <p className="mt-6 font-mono text-xs text-accent">{layer.metric}</p>
+                  <p className="mt-4 font-mono text-[10px] tracking-wider text-muted">
+                    {layer.mapsTo.join(" · ")}
+                  </p>
+                  <p className="mt-2 font-mono text-xs text-accent">{layer.metric}</p>
                 </div>
               ))}
             </div>
 
-            <div className="mt-12 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border/60 bg-border/40 md:grid-cols-5">
-              {stats.map((s) => (
-                <div key={s.label} className="bg-panel px-4 py-6 text-center md:px-6">
-                  <p className="font-display text-2xl font-bold text-white md:text-3xl">
-                    {s.value}
-                  </p>
-                  <p className="mt-2 font-mono text-[9px] leading-snug tracking-wider text-muted">
-                    {s.label}
-                  </p>
-                </div>
-              ))}
+            <div className="mt-12">
+              <LiveStats />
             </div>
           </div>
         </section>
@@ -259,23 +228,8 @@ export default function HomePage() {
                   matches, gracefully deferring the rest. Live proof of ambient identity in
                   automotive.
                 </p>
-                <div className="mt-8 space-y-3 font-mono text-sm">
-                  <div className="flex justify-between text-accent">
-                    <span>seat.position</span>
-                    <span>72 → applied</span>
-                  </div>
-                  <div className="flex justify-between text-accent">
-                    <span>climate.temp</span>
-                    <span>71°F → applied</span>
-                  </div>
-                  <div className="flex justify-between text-accent">
-                    <span>drivingMode.mode</span>
-                    <span>comfort → applied</span>
-                  </div>
-                  <div className="flex justify-between text-amber-400/80">
-                    <span>seat.lumbar</span>
-                    <span>6 → deferred</span>
-                  </div>
+                <div className="mt-8">
+                  <LiveProof />
                 </div>
                 <Link href="/register?role=DRIVER" className="btn-primary mt-8 inline-flex">
                   Build your identity

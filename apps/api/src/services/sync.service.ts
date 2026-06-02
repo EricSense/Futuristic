@@ -11,28 +11,48 @@ const CATEGORY_TO_PROFILE_FIELD: Record<string, string> = {
   accessibility: "accessibility",
 };
 
-function flattenPreferences(category: string, config: Record<string, unknown>): SyncPlanItem[] {
-  return Object.entries(config).map(([key, requestedValue]) => ({
-    category,
-    key,
-    requestedValue,
-    applied: false,
-  }));
+const KEY_TO_CAPABILITY: Record<string, string> = {
+  mode: "modes",
+  source: "sources",
+};
+
+const BOOL_TO_ASSIST: Record<string, string> = {
+  laneKeep: "lane-keep",
+  adaptiveCruise: "adaptive-cruise",
+  blindSpot: "blind-spot",
+};
+
+function resolveCapabilityRange(key: string, rangeObj: Record<string, unknown>): unknown {
+  if (rangeObj[key] !== undefined) return rangeObj[key];
+  const mapped = KEY_TO_CAPABILITY[key];
+  if (mapped && rangeObj[mapped] !== undefined) return rangeObj[mapped];
+  if (BOOL_TO_ASSIST[key] && rangeObj.assists !== undefined) return rangeObj.assists;
+  return rangeObj;
 }
 
-function valueInRange(value: unknown, range: unknown): boolean {
+function valueInRange(value: unknown, range: unknown, key: string): boolean {
   if (range === undefined || range === null) return false;
-  if (typeof value === "number" && typeof range === "object" && range !== null) {
+
+  if (typeof value === "boolean") {
+    if (Array.isArray(range) && BOOL_TO_ASSIST[key]) {
+      return !value || range.includes(BOOL_TO_ASSIST[key]);
+    }
+    return true;
+  }
+
+  if (typeof value === "number" && typeof range === "object" && range !== null && !Array.isArray(range)) {
     const r = range as { min?: number; max?: number };
     if (typeof r.min === "number" && typeof r.max === "number") {
       return value >= r.min && value <= r.max;
     }
   }
+
   if (typeof value === "string" && Array.isArray(range)) {
     return range.includes(value);
   }
-  if (typeof value === "boolean") return true;
+
   if (typeof value === "object" && value !== null) return true;
+
   return false;
 }
 
@@ -50,6 +70,7 @@ export function generateSyncPlan(
     const range = capMap.get(category);
     if (!range) {
       for (const [key, requestedValue] of Object.entries(config)) {
+        if (key === "presets" || key === "regen" || key === "zones") continue;
         items.push({ category, key, requestedValue, applied: false, reason: "Category not supported by vehicle" });
       }
       continue;
@@ -57,8 +78,9 @@ export function generateSyncPlan(
 
     const rangeObj = range as Record<string, unknown>;
     for (const [key, requestedValue] of Object.entries(config)) {
-      const keyRange = rangeObj[key] ?? rangeObj;
-      if (valueInRange(requestedValue, keyRange)) {
+      if (key === "presets" || key === "regen" || key === "zones") continue;
+      const keyRange = resolveCapabilityRange(key, rangeObj);
+      if (valueInRange(requestedValue, keyRange, key)) {
         items.push({ category, key, requestedValue, applied: true });
       } else {
         items.push({
@@ -95,6 +117,9 @@ export async function startSyncSession(driverUserId: string, vehicleId: string) 
   });
   if (!vehicle) throw new AppError(404, "Vehicle not found");
   if (vehicle.status !== "ACTIVE") throw new AppError(400, "Vehicle is not available for sync");
+  if (vehicle.capabilities.length === 0) {
+    throw new AppError(400, "Vehicle has no capabilities defined — owner must configure first");
+  }
 
   const plan = generateSyncPlan(
     profile as unknown as Record<string, unknown>,
@@ -105,7 +130,7 @@ export async function startSyncSession(driverUserId: string, vehicleId: string) 
     data: {
       driverProfileId: profile.id,
       vehicleId,
-      status: "ACTIVE",
+      status: "SYNCING",
       syncPlan: plan as unknown as Prisma.InputJsonValue,
       appliedPreferences: {
         create: plan.items.map((item) => ({
@@ -152,4 +177,20 @@ export async function listDriverSessions(driverUserId: string) {
     orderBy: { startedAt: "desc" },
     take: 20,
   });
+}
+
+export async function getLatestSyncProof() {
+  const session = await prisma.syncSession.findFirst({
+    where: { status: "COMPLETED" },
+    orderBy: { startedAt: "desc" },
+    include: {
+      appliedPreferences: { where: { applied: true }, take: 3 },
+    },
+  });
+  if (!session) return null;
+  return session.appliedPreferences.map((p) => ({
+    category: p.category,
+    key: p.key,
+    value: p.value,
+  }));
 }
