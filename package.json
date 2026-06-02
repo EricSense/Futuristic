@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "turbo run dev",
-    "build": "turbo run build",
+    "build": "pnpm db:generate && turbo run build",
     "db:generate": "pnpm --filter @futuristic/db run generate",
     "db:migrate": "pnpm --filter @futuristic/db run migrate",
     "db:seed": "pnpm --filter @futuristic/db run seed",
