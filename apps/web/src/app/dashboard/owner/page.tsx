@@ -92,10 +92,10 @@ export default function OwnerDashboard() {
         )}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="label">Recognition surface registry</p>
+            <p className="label">EV surface registry</p>
             <h1 className="font-display text-3xl font-bold">{user?.name ?? "Owner"}</h1>
             <p className="mt-1 text-muted">
-              Register environments that can recognize Digital Driving Identities
+              Register vehicles and configure policy domains for DDI bind validation
             </p>
           </div>
           <button onClick={() => setShowForm(!showForm)} className="btn-primary">
@@ -107,7 +107,7 @@ export default function OwnerDashboard() {
           <StatCard label="Surfaces registered" value={vehicles.length} accent />
           <StatCard label="Active surfaces" value={activeCount} />
           <StatCard
-            label="DDI signal domains"
+            label="Policy domains"
             value={vehicles.reduce((n, v) => n + v.capabilities.length, 0)}
           />
         </div>
@@ -175,7 +175,7 @@ export default function OwnerDashboard() {
                   onClick={() => seedCapabilities(v.id)}
                   className="btn-ghost mt-4 text-xs"
                 >
-                  Enable DDI recognition
+                  Enable policy domains
                 </button>
               )}
             </div>

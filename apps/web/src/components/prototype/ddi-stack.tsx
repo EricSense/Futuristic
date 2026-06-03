@@ -4,13 +4,15 @@ import { DDI_LAYER_EDITOR, type DdiProfileField } from "@futuristic/shared";
 
 type DdiData = Partial<Record<DdiProfileField, Record<string, unknown>>>;
 
+const SKIP_KEYS = new Set(["restrictions", "fleetMemberships", "emergencyContact"]);
+
 export function DdiStack({ ddi, completeness }: { ddi: DdiData; completeness: number }) {
   return (
     <div className="card">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <p className="label">Identity stack</p>
-          <p className="font-display text-lg font-bold">Your living signature</p>
+          <p className="label">Portable DDI</p>
+          <p className="font-display text-lg font-bold">Travels with you across any vehicle</p>
         </div>
         <span className="font-display text-2xl font-bold text-accent">{completeness}%</span>
       </div>
@@ -22,14 +24,12 @@ export function DdiStack({ ddi, completeness }: { ddi: DdiData; completeness: nu
             <div className="mt-3 grid gap-2 sm:grid-cols-2">
               {layer.domains.map((domain) => {
                 const signals = ddi[domain.profileField] ?? {};
-                const entries = Object.entries(signals).filter(
-                  ([k]) => !["presets", "zones", "regen"].includes(k),
-                );
+                const entries = Object.entries(signals).filter(([k]) => !SKIP_KEYS.has(k));
                 return (
                   <div key={domain.profileField} className="rounded-lg bg-void/60 px-3 py-2">
                     <p className="text-[10px] uppercase tracking-wider text-muted">{domain.label}</p>
                     {entries.length === 0 ? (
-                      <p className="mt-1 text-xs text-zinc-500">No signals</p>
+                      <p className="mt-1 text-xs text-zinc-500">Not configured</p>
                     ) : (
                       <ul className="mt-1 space-y-0.5 font-mono text-[11px] text-accent">
                         {entries.map(([k, v]) => (

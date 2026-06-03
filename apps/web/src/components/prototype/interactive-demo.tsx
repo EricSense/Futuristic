@@ -1,6 +1,6 @@
 "use client";
 
-import { DDI_LAYER_EDITOR } from "@futuristic/shared";
+import { DDI_LAYER_EDITOR, formatBindClaim, type DdiProfileField } from "@futuristic/shared";
 import Link from "next/link";
 import { useCallback, useState } from "react";
 import {
@@ -12,12 +12,12 @@ import {
 } from "@/lib/api";
 
 interface Profile {
-  seatConfig: Record<string, unknown>;
-  mirrorConfig: Record<string, unknown>;
-  climateConfig: Record<string, unknown>;
-  infotainmentConfig: Record<string, unknown>;
-  drivingMode: Record<string, unknown>;
-  accessibility: Record<string, unknown>;
+  credentials: Record<string, unknown>;
+  authorization: Record<string, unknown>;
+  autonomyPosture: Record<string, unknown>;
+  compliance: Record<string, unknown>;
+  operationalNeeds: Record<string, unknown>;
+  energyProfile: Record<string, unknown>;
   completeness: { percent: number };
 }
 
@@ -29,27 +29,40 @@ interface Surface {
   owner: { name: string };
 }
 
-interface SyncResult {
+interface BindResult {
   session: { id: string };
   plan: {
-    items: { category: string; key: string; applied: boolean; reason?: string }[];
+    bindStatus?: string;
+    items: { category: string; key: string; applied: boolean; reason?: string; requestedValue?: unknown }[];
     summary: { applied: number; unsupported: number };
     message: string;
   };
 }
 
-type Step = "idle" | "auth" | "identity" | "recognize" | "done" | "error";
+type Step = "idle" | "auth" | "identity" | "bind" | "done" | "error";
 
 const DEMO = { email: "alex@driver.futuristic", password: "password123" };
+
+function layerPreview(profile: Profile, layerId: string): string {
+  const layer = DDI_LAYER_EDITOR.find((l) => l.id === layerId);
+  if (!layer) return "—";
+  const parts: string[] = [];
+  for (const domain of layer.domains) {
+    const data = profile[domain.profileField] as Record<string, unknown> | undefined;
+    if (!data) continue;
+    const first = Object.entries(data).find(([k]) => k !== "restrictions" && k !== "fleetMemberships");
+    if (first) parts.push(`${first[0]}:${String(first[1])}`);
+  }
+  return parts.slice(0, 2).join(" · ") || "—";
+}
 
 export function InteractivePrototype() {
   const [step, setStep] = useState<Step>("idle");
   const [log, setLog] = useState<string[]>([]);
   const [error, setError] = useState("");
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [surfaces, setSurfaces] = useState<Surface[]>([]);
   const [selectedSurface, setSelectedSurface] = useState<Surface | null>(null);
-  const [result, setResult] = useState<SyncResult["plan"] | null>(null);
+  const [result, setResult] = useState<BindResult["plan"] | null>(null);
   const [token, setToken] = useState("");
 
   const push = useCallback((line: string) => {
@@ -60,7 +73,6 @@ export function InteractivePrototype() {
     setError("");
     setLog([]);
     setProfile(null);
-    setSurfaces([]);
     setSelectedSurface(null);
     setResult(null);
     setToken("");
@@ -81,33 +93,34 @@ export function InteractivePrototype() {
       push(`→ GET ${API_URL}/profile`);
       const p = await apiFetch<Profile>("/profile", { token: auth.accessToken });
       setProfile(p);
-      push(`✓ Digital Driving Identity loaded (${p.completeness.percent}% complete)`);
+      push(`✓ Portable DDI loaded (${p.completeness.percent}% complete)`);
+      push(`  credentials: Class ${String((p.credentials as Record<string, unknown>).licenseClass ?? "?")} · verified`);
+      push(`  autonomy: ${String((p.autonomyPosture as Record<string, unknown>).maxAutonomyLevel ?? "?")} · ${String((p.autonomyPosture as Record<string, unknown>).handoffPolicy ?? "?")} handoff`);
 
       push(`→ GET ${API_URL}/vehicles/available`);
       const list = await apiFetch<Surface[]>("/vehicles/available", {
         token: auth.accessToken,
       });
-      setSurfaces(list);
       if (list.length === 0) throw new Error("No recognition surfaces available");
       const surface = list[0]!;
       setSelectedSurface(surface);
-      push(`✓ ${list.length} recognition surface(s) — using ${surface.year} ${surface.make} ${surface.model}`);
+      push(`✓ ${list.length} EV surface(s) — binding to ${surface.year} ${surface.make} ${surface.model}`);
 
-      setStep("recognize");
-      push(`→ POST ${API_URL}/sync/start`);
-      const sync = await apiFetch<SyncResult>("/sync/start", {
+      setStep("bind");
+      push(`→ POST ${API_URL}/sync/start  (DDI bind)`);
+      const bind = await apiFetch<BindResult>("/sync/start", {
         method: "POST",
         token: auth.accessToken,
         body: JSON.stringify({ vehicleId: surface.id }),
       });
-      push(`→ POST ${API_URL}/sync/${sync.session.id}/complete`);
-      await apiFetch(`/sync/${sync.session.id}/complete`, {
+      push(`→ POST ${API_URL}/sync/${bind.session.id}/complete`);
+      await apiFetch(`/sync/${bind.session.id}/complete`, {
         method: "POST",
         token: auth.accessToken,
       });
-      setResult(sync.plan);
-      push(`✓ ${sync.plan.message}`);
-      push(`✓ ${sync.plan.summary.applied} signals expressed · ${sync.plan.summary.unsupported} deferred`);
+      setResult(bind.plan);
+      push(`✓ ${bind.plan.message}`);
+      push(`✓ ${bind.plan.summary.applied} claims granted · ${bind.plan.summary.unsupported} denied`);
       setStep("done");
     } catch (err) {
       setStep("error");
@@ -115,14 +128,6 @@ export function InteractivePrototype() {
       setError(msg);
       push(`✗ ${msg}`);
     }
-  }
-
-  function signalPreview(field: string, data: Record<string, unknown> | undefined) {
-    if (!data || Object.keys(data).length === 0) return "—";
-    return Object.entries(data)
-      .slice(0, 3)
-      .map(([k, v]) => `${k}:${String(v)}`)
-      .join(" · ");
   }
 
   const running = step !== "idle" && step !== "done" && step !== "error";
@@ -134,11 +139,12 @@ export function InteractivePrototype() {
           <div>
             <p className="font-mono text-[10px] tracking-[0.3em] text-muted">// LIVE PROTOTYPE</p>
             <h2 className="font-display mt-2 text-3xl font-bold md:text-4xl">
-              Watch DDI recognition run for real
+              Bind a portable DDI to an EV surface
             </h2>
             <p className="mt-3 max-w-2xl text-sm text-zinc-400">
-              One click loads a demo identity from the production API, picks a recognition surface,
-              and runs the sync engine. This is the working Futuristic prototype — not a mockup.
+              One click presents Alex&apos;s Digital Driving Identity to a real vehicle — validating
+              credentials, fleet authorization, autonomy contract, compliance, and charging profile.
+              This is identity infrastructure for the autonomous era, not cabin settings.
             </p>
           </div>
           <button
@@ -147,7 +153,7 @@ export function InteractivePrototype() {
             disabled={running}
             className="btn-primary text-xs tracking-wide disabled:opacity-50"
           >
-            {running ? "Running…" : "RUN LIVE PROTOTYPE"}
+            {running ? "Binding…" : "RUN DDI BIND"}
           </button>
         </div>
 
@@ -155,10 +161,7 @@ export function InteractivePrototype() {
           <div className="space-y-4">
             <div className="grid gap-3 sm:grid-cols-3">
               {DDI_LAYER_EDITOR.map((layer, i) => {
-                const active = step === "identity" || step === "recognize" || step === "done";
-                const domain = layer.domains[0];
-                const field = domain?.profileField;
-                const data = profile && field ? (profile[field] as Record<string, unknown>) : undefined;
+                const active = step === "identity" || step === "bind" || step === "done";
                 return (
                   <div
                     key={layer.id}
@@ -171,14 +174,14 @@ export function InteractivePrototype() {
                     </p>
                     <p className="mt-2 font-display text-xs font-bold">{layer.name}</p>
                     <p className="mt-2 font-mono text-[10px] text-accent">
-                      {active && profile ? signalPreview(field!, data) : "awaiting…"}
+                      {active && profile ? layerPreview(profile, layer.id) : "awaiting…"}
                     </p>
                   </div>
                 );
               })}
             </div>
 
-            {selectedSurface && (step === "recognize" || step === "done") && (
+            {selectedSurface && (step === "bind" || step === "done") && (
               <div className="card border-glow/30">
                 <p className="label">Recognition surface</p>
                 <p className="font-display text-lg font-bold">
@@ -190,24 +193,22 @@ export function InteractivePrototype() {
 
             {result && (
               <div className="card">
-                <p className="label">Recognition result</p>
+                <p className="label">Bind manifest</p>
                 <p className="text-sm font-medium text-accent">{result.message}</p>
-                <div className="mt-3 max-h-40 space-y-1 overflow-y-auto font-mono text-[11px]">
-                  {result.items.slice(0, 12).map((item, i) => (
+                <div className="mt-3 max-h-48 space-y-1 overflow-y-auto font-mono text-[11px]">
+                  {result.items.map((item, i) => (
                     <div key={i} className={item.applied ? "text-emerald-400" : "text-amber-400/80"}>
-                      {item.category}.{item.key} → {item.applied ? "expressed" : "deferred"}
+                      {formatBindClaim(item.category, item.key)} →{" "}
+                      {item.applied ? "granted" : item.reason ?? "denied"}
                     </div>
                   ))}
-                  {result.items.length > 12 && (
-                    <p className="text-muted">+{result.items.length - 12} more signals</p>
-                  )}
                 </div>
                 {token && (
                   <Link
                     href={getDashboardPath("DRIVER")}
                     className="btn-ghost mt-4 inline-flex text-xs"
                   >
-                    Open full driver DDI →
+                    Open full DDI dashboard →
                   </Link>
                 )}
               </div>
@@ -223,11 +224,11 @@ export function InteractivePrototype() {
 
           <div className="overflow-hidden rounded-2xl border border-border/60 bg-void font-mono text-sm">
             <div className="border-b border-border/40 bg-surface/80 px-4 py-2 text-[10px] tracking-wider text-muted">
-              recognition.runtime — live output
+              ddi.bind.runtime — live output
             </div>
             <div className="min-h-[320px] space-y-1.5 p-4">
               {log.length === 0 && (
-                <p className="text-muted">Press RUN LIVE PROTOTYPE to execute against {API_URL}</p>
+                <p className="text-muted">Press RUN DDI BIND to execute against {API_URL}</p>
               )}
               {log.map((line, i) => (
                 <p
@@ -237,7 +238,9 @@ export function InteractivePrototype() {
                       ? "text-emerald-400"
                       : line.startsWith("✗")
                         ? "text-red-400"
-                        : "text-accent"
+                        : line.startsWith("  ")
+                          ? "text-zinc-400"
+                          : "text-accent"
                   }
                 >
                   {line}
@@ -249,9 +252,9 @@ export function InteractivePrototype() {
         </div>
 
         <p className="mt-6 text-center font-mono text-[11px] text-muted">
-          Demo identity: {DEMO.email} ·{" "}
+          Demo DDI: {DEMO.email} · Try Rivian (L2 cap) vs BMW i4 (L4) for different bind outcomes ·{" "}
           <Link href="/login" className="text-accent hover:underline">
-            or sign in to explore the full dashboard
+            sign in
           </Link>
         </p>
       </div>

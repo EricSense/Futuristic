@@ -6,9 +6,9 @@ import { Marquee } from "@/components/landing/marquee";
 import { SystemNav } from "@/components/landing/system-nav";
 
 const layerMeta = [
-  { status: "SYNCING", statusColor: "text-accent", metric: "Seat · Mirrors" },
-  { status: "LIVE", statusColor: "text-emerald-400", metric: "Climate · Mode · Audio" },
-  { status: "PENDING", statusColor: "text-amber-400", metric: "Assists · Display" },
+  { status: "LIVE", statusColor: "text-emerald-400", metric: "License · Fleet · Insurance" },
+  { status: "LIVE", statusColor: "text-emerald-400", metric: "Autonomy · Safety · Training" },
+  { status: "LIVE", statusColor: "text-emerald-400", metric: "Mobility · Charging · SOC" },
 ];
 
 const identityLayers = IDENTITY_LAYERS.map((layer, i) => ({
@@ -22,7 +22,7 @@ const domains = [
     name: "VEHICLE",
     status: "PROVEN",
     statusClass: "text-emerald-400 border-emerald-400/30 bg-emerald-400/10",
-    desc: "DDI proven in automotive — the first recognition domain. Your living signature travels; environments adapt.",
+    desc: "DDI bind proven across EV surfaces — credentials, fleet auth, and autonomy contracts validated at scale.",
   },
   {
     icon: "🏠",
@@ -48,11 +48,11 @@ const domains = [
 ];
 
 const principles = [
-  "Seamless identity continuity across contexts",
-  "Environment adapts; user never configures",
-  "Preference is infrastructure, not a setting",
-  "Privacy-first architecture by design",
-  "Open protocol, not a closed ecosystem",
+  "Portable identity — one DDI, any vehicle or fleet",
+  "Bind-time validation of credentials and autonomy contract",
+  "Graceful degradation when surface policies differ",
+  "Privacy-first, driver-controlled identity layer",
+  "Open protocol for OEMs, fleets, and mobility operators",
 ];
 
 export default function HomePage() {
@@ -82,9 +82,9 @@ export default function HomePage() {
               YOU
             </h1>
             <p className="mt-8 max-w-2xl text-base leading-relaxed text-zinc-400 md:text-lg">
-              Your Digital Driving Identity isn&apos;t a car feature — it&apos;s an early proof of
-              concept for something much larger. The car that knows you is the prototype for the
-              world that knows you.
+              A portable Digital Driving Identity that travels with you across any vehicle — credentials,
+              authorization, autonomy contract, and EV profile validated at every bind. Critical
+              infrastructure as autonomous fleets and shared EVs proliferate.
             </p>
             <div className="mt-10 flex flex-wrap gap-4">
               <Link href="/register" className="btn-primary tracking-wide">
@@ -199,12 +199,13 @@ export default function HomePage() {
                   TO WORLD
                 </h3>
                 <p className="mt-4 text-sm leading-relaxed text-zinc-400">
-                  What the car already does — adapt seat position, adjust climate, cue your playlist
-                  — is a microcosm of what every physical and digital environment can do.
+                  As vehicles become shared, electric, and autonomous, drivers need a portable identity
+                  — not settings saved in one car. Futuristic validates license, fleet authorization,
+                  autonomy level, and charging profile every time you enter a new surface.
                 </p>
                 <p className="mt-4 text-sm leading-relaxed text-zinc-400">
-                  FUTURISTIC isn&apos;t building a car feature. It&apos;s validating the
-                  infrastructure of personal recognition at planetary scale.
+                  FUTURISTIC isn&apos;t building cabin preferences. It&apos;s building the bind layer
+                  that makes cross-vehicle mobility work at fleet scale.
                 </p>
                 <ul className="mt-6 space-y-2 border-t border-border/40 pt-6">
                   {principles.map((p) => (
@@ -227,9 +228,8 @@ export default function HomePage() {
                 <p className="font-mono text-[10px] tracking-[0.3em] text-muted">SYSTEM STATUS</p>
                 <h2 className="font-display mt-2 text-3xl font-bold">IDENTITY RUNTIME</h2>
                 <p className="mt-4 text-sm text-zinc-400">
-                  The recognition runtime maps DDI signals to what each surface can honor — expressing
-                  identity where supported, deferring gracefully where not. Live proof of ambient
-                  identity in automotive.
+                  The bind runtime validates portable DDI claims against each EV surface&apos;s policy
+                  domains — granting authorization where aligned, denying with reason where not.
                 </p>
                 <div className="mt-8">
                   <LiveProof />
@@ -244,10 +244,10 @@ export default function HomePage() {
                   <span className="text-accent">FUTURISTIC_DDI</span> — identity.runtime
                 </p>
                 <p className="mt-4 text-zinc-300">$ ddi init --scope=world</p>
-                <p className="text-emerald-400">✓ Biometric layer loaded</p>
-                <p className="text-emerald-400">✓ Behavioral mesh calibrated</p>
-                <p className="text-emerald-400">✓ Context field active</p>
-                <p className="text-accent">→ Extending identity to new domains...</p>
+                <p className="text-emerald-400">✓ Credentials layer loaded</p>
+                <p className="text-emerald-400">✓ Autonomy contract active</p>
+                <p className="text-emerald-400">✓ EV energy profile bound</p>
+                <p className="text-accent">→ Presenting DDI to recognition surface...</p>
                 <p className="mt-4 text-zinc-500">
                   DOMAIN [ VEHICLE ] ........ <span className="text-emerald-400">PROVEN</span>
                 </p>

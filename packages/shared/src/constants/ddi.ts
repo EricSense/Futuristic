@@ -1,28 +1,28 @@
 import { IDENTITY_LAYERS } from "./capabilities.js";
 
-/** Maps sync/API domain keys to driver profile JSON fields */
+/** Maps bind/API domain keys to driver profile JSON fields */
 export const DDI_DOMAIN_TO_PROFILE: Record<string, string> = {
-  seat: "seatConfig",
-  mirrors: "mirrorConfig",
-  climate: "climateConfig",
-  infotainment: "infotainmentConfig",
-  drivingMode: "drivingMode",
-  accessibility: "accessibility",
+  credentials: "credentials",
+  authorization: "authorization",
+  autonomy: "autonomyPosture",
+  compliance: "compliance",
+  operational: "operationalNeeds",
+  energy: "energyProfile",
 };
 
 export type DdiProfileField =
-  | "seatConfig"
-  | "mirrorConfig"
-  | "climateConfig"
-  | "infotainmentConfig"
-  | "drivingMode"
-  | "accessibility";
+  | "credentials"
+  | "authorization"
+  | "autonomyPosture"
+  | "compliance"
+  | "operationalNeeds"
+  | "energyProfile";
 
 export interface DdiDomainEditor {
   profileField: DdiProfileField;
   domain: string;
   label: string;
-  fields: { name: string; label: string; default?: string }[];
+  fields: { name: string; label: string; default?: string; type?: "text" | "select" | "boolean" }[];
 }
 
 export interface DdiLayerEditor {
@@ -35,68 +35,74 @@ export interface DdiLayerEditor {
 const LAYER_DOMAINS: Record<string, DdiDomainEditor[]> = {
   LAYER_01: [
     {
-      profileField: "seatConfig",
-      domain: "seat",
-      label: "Body signature",
+      profileField: "credentials",
+      domain: "credentials",
+      label: "Driving credentials",
       fields: [
-        { name: "position", label: "Position", default: "72" },
-        { name: "lumbar", label: "Lumbar", default: "6" },
-        { name: "height", label: "Height", default: "58" },
-        { name: "tilt", label: "Tilt", default: "12" },
+        { name: "licenseClass", label: "License class", default: "C", type: "select" },
+        { name: "licenseVerified", label: "License verified", default: "true", type: "boolean" },
+        { name: "insuranceVerified", label: "Insurance verified", default: "true", type: "boolean" },
+        { name: "evCertified", label: "EV operator certified", default: "true", type: "boolean" },
       ],
     },
     {
-      profileField: "mirrorConfig",
-      domain: "mirrors",
-      label: "Spatial alignment",
+      profileField: "authorization",
+      domain: "authorization",
+      label: "Access authorization",
       fields: [
-        { name: "left", label: "Left", default: "-8" },
-        { name: "right", label: "Right", default: "14" },
-        { name: "rearview", label: "Rearview", default: "0" },
+        { name: "fleetMemberships", label: "Fleet IDs (comma-separated)", default: "seed-fleet-metro" },
+        { name: "accessTier", label: "Access tier", default: "fleet", type: "select" },
+        { name: "roamingEnabled", label: "Cross-fleet roaming", default: "true", type: "boolean" },
       ],
     },
   ],
   LAYER_02: [
     {
-      profileField: "climateConfig",
-      domain: "climate",
-      label: "Climate rhythm",
+      profileField: "autonomyPosture",
+      domain: "autonomy",
+      label: "Autonomy contract",
       fields: [
-        { name: "temp", label: "Temperature (°F)", default: "71" },
-        { name: "fan", label: "Airflow", default: "3" },
+        { name: "maxAutonomyLevel", label: "Max autonomy level", default: "L3", type: "select" },
+        { name: "handoffPolicy", label: "Handoff policy", default: "planned", type: "select" },
+        { name: "supervisedRequired", label: "Supervised mode required", default: "false", type: "boolean" },
+        { name: "geofenceMode", label: "Geofence mode", default: "standard", type: "select" },
       ],
     },
     {
-      profileField: "infotainmentConfig",
-      domain: "infotainment",
-      label: "Ambient audio",
+      profileField: "compliance",
+      domain: "compliance",
+      label: "Safety & compliance",
       fields: [
-        { name: "volume", label: "Volume", default: "35" },
-        { name: "source", label: "Source", default: "bluetooth" },
+        { name: "safetyScore", label: "Safety score", default: "92" },
+        { name: "trainingCurrent", label: "Training current", default: "true", type: "boolean" },
+        { name: "restrictions", label: "Restrictions (comma-separated)", default: "" },
       ],
-    },
-    {
-      profileField: "drivingMode",
-      domain: "drivingMode",
-      label: "Movement intent",
-      fields: [{ name: "mode", label: "Default mode", default: "comfort" }],
     },
   ],
   LAYER_03: [
     {
-      profileField: "accessibility",
-      domain: "accessibility",
-      label: "Contextual assists",
+      profileField: "operationalNeeds",
+      domain: "operational",
+      label: "Operational needs",
       fields: [
-        { name: "laneKeep", label: "Lane keep", default: "true" },
-        { name: "adaptiveCruise", label: "Adaptive cruise", default: "true" },
-        { name: "display", label: "Display mode", default: "standard" },
+        { name: "mobilityAid", label: "Mobility aid", default: "none", type: "select" },
+        { name: "sensoryMode", label: "Sensory mode", default: "standard", type: "select" },
+        { name: "emergencyContact", label: "Emergency contact", default: "+1-555-0100" },
+      ],
+    },
+    {
+      profileField: "energyProfile",
+      domain: "energy",
+      label: "EV energy profile",
+      fields: [
+        { name: "preferredConnector", label: "Preferred connector", default: "NACS", type: "select" },
+        { name: "targetSocPercent", label: "Target state of charge %", default: "80" },
+        { name: "publicChargingAllowed", label: "Public charging allowed", default: "true", type: "boolean" },
       ],
     },
   ],
 };
 
-/** Single source of truth for DDI layer UI (dashboard + onboarding) */
 export const DDI_LAYER_EDITOR: DdiLayerEditor[] = IDENTITY_LAYERS.map((layer) => ({
   id: layer.id,
   name: layer.name,
@@ -104,7 +110,6 @@ export const DDI_LAYER_EDITOR: DdiLayerEditor[] = IDENTITY_LAYERS.map((layer) =>
   domains: LAYER_DOMAINS[layer.id] ?? [],
 }));
 
-/** Onboarding: one step per identity layer (core signals only) */
 export const DDI_ONBOARDING_STEPS = DDI_LAYER_EDITOR.map((layer) => ({
   id: layer.id,
   name: layer.name,
@@ -114,3 +119,43 @@ export const DDI_ONBOARDING_STEPS = DDI_LAYER_EDITOR.map((layer) => ({
     fields: d.fields.slice(0, 2),
   })),
 }));
+
+/** Human-readable labels for bind claim display */
+export const BIND_CLAIM_LABELS: Record<string, Record<string, string>> = {
+  credentials: {
+    licenseClass: "License class",
+    licenseVerified: "License verification",
+    insuranceVerified: "Insurance verification",
+    evCertified: "EV certification",
+  },
+  authorization: {
+    fleetMembership: "Fleet authorization",
+    accessTier: "Access tier",
+    roamingEnabled: "Cross-fleet roaming",
+  },
+  autonomy: {
+    maxAutonomyLevel: "Autonomy level",
+    handoffPolicy: "Handoff policy",
+    supervisedRequired: "Supervised mode",
+    geofenceMode: "Geofence mode",
+  },
+  compliance: {
+    safetyScore: "Safety score",
+    trainingCurrent: "Training status",
+    restrictions: "Driving restrictions",
+  },
+  operational: {
+    mobilityAid: "Mobility accommodation",
+    sensoryMode: "Sensory mode",
+    emergencyContact: "Emergency contact",
+  },
+  energy: {
+    preferredConnector: "Charging connector",
+    targetSocPercent: "Target SOC",
+    publicChargingAllowed: "Public charging",
+  },
+};
+
+export function formatBindClaim(category: string, key: string): string {
+  return BIND_CLAIM_LABELS[category]?.[key] ?? `${category}.${key}`;
+}

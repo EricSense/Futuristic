@@ -28,15 +28,15 @@ enum SyncStatus {
 }
 
 model User {
-  id           String         @id @default(uuid())
-  email        String         @unique
-  passwordHash String
-  name         String
-  role         UserRole
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  id            String         @id @default(uuid())
+  email         String         @unique
+  passwordHash  String
+  name          String
+  role          UserRole
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
   driverProfile DriverProfile?
-  vehicles     Vehicle[]
+  vehicles      Vehicle[]
   fleetOperator FleetOperator?
   refreshTokens RefreshToken[]
 }
@@ -50,19 +50,20 @@ model RefreshToken {
   createdAt DateTime @default(now())
 }
 
+/// Portable Digital Driving Identity — travels with the driver across vehicles
 model DriverProfile {
-  id                  String              @id @default(uuid())
-  userId              String              @unique
-  user                User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  seatConfig          Json                @default("{}")
-  mirrorConfig        Json                @default("{}")
-  climateConfig       Json                @default("{}")
-  infotainmentConfig  Json                @default("{}")
-  drivingMode         Json                @default("{}")
-  accessibility       Json                @default("{}")
-  createdAt           DateTime            @default(now())
-  updatedAt           DateTime            @updatedAt
-  syncSessions        SyncSession[]
+  id               String        @id @default(uuid())
+  userId           String        @unique
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  credentials      Json          @default("{}")
+  authorization    Json          @default("{}")
+  autonomyPosture  Json          @default("{}")
+  compliance       Json          @default("{}")
+  operationalNeeds Json          @default("{}")
+  energyProfile    Json          @default("{}")
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  syncSessions     SyncSession[]
 }
 
 model Vehicle {
@@ -82,6 +83,7 @@ model Vehicle {
   syncSessions SyncSession[]
 }
 
+/// Surface policy domains the vehicle can honor during a DDI bind
 model VehicleCapability {
   id             String  @id @default(uuid())
   vehicleId      String
@@ -108,6 +110,7 @@ model Fleet {
   vehicles   Vehicle[]
 }
 
+/// DDI bind session — portable identity presented to a recognition surface
 model SyncSession {
   id                 String              @id @default(uuid())
   driverProfileId    String
@@ -121,6 +124,7 @@ model SyncSession {
   appliedPreferences AppliedPreference[]
 }
 
+/// Individual authorization claim from a bind evaluation
 model AppliedPreference {
   id            String      @id @default(uuid())
   syncSessionId String

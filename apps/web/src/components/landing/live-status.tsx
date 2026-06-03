@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { formatBindClaim } from "@futuristic/shared";
 import { API_URL } from "@/lib/api";
 
 interface PlatformStatus {
@@ -23,27 +24,25 @@ export function LiveProof() {
   }, []);
 
   const proof = status?.latestProof ?? [
-    { category: "seat", key: "position", value: 72 },
-    { category: "climate", key: "temp", value: 71 },
-    { category: "drivingMode", key: "mode", value: "comfort" },
+    { category: "credentials", key: "licenseClass", value: "C" },
+    { category: "authorization", key: "fleetMembership", value: "Metro EV Pool" },
+    { category: "autonomy", key: "maxAutonomyLevel", value: "L3" },
   ];
 
   return (
     <div>
       <div className="space-y-3 font-mono text-sm">
         {proof.map((item) => (
-          <div key={`${item.category}.${item.key}`} className="flex justify-between text-accent">
-            <span>
-              {item.category}.{item.key}
-            </span>
-            <span>{String(item.value)} → expressed</span>
+          <div key={`${item.category}.${item.key}`} className="flex justify-between gap-4 text-accent">
+            <span>{formatBindClaim(item.category, item.key)}</span>
+            <span className="text-emerald-400">{String(item.value)} → granted</span>
           </div>
         ))}
       </div>
       {status && (
         <p className="mt-6 text-xs text-muted">
-          {status.appliedPreferences} identity signals across {status.completedSessions} recognition
-          events · {status.vehicles} active surfaces
+          {status.appliedPreferences} bind claims across {status.completedSessions} DDI binds ·{" "}
+          {status.vehicles} EV surfaces
         </p>
       )}
     </div>
@@ -62,18 +61,18 @@ export function LiveStats() {
 
   const stats = status
     ? [
-        { value: String(status.sessions), label: "RECOGNITION EVENTS" },
-        { value: String(status.appliedPreferences), label: "SIGNALS EXPRESSED" },
-        { value: "128", label: "BEHAVIORAL DIMENSIONS" },
-        { value: `${status.drivers}`, label: "ACTIVE IDENTITIES" },
-        { value: "∞", label: "SCALE POTENTIAL" },
+        { value: String(status.completedSessions), label: "DDI BINDS" },
+        { value: String(status.appliedPreferences), label: "CLAIMS GRANTED" },
+        { value: String(status.vehicles), label: "EV SURFACES" },
+        { value: `${status.drivers}`, label: "PORTABLE IDENTITIES" },
+        { value: "L4", label: "MAX AUTONOMY TESTED" },
       ]
     : [
-        { value: "—", label: "RECOGNITION EVENTS" },
-        { value: "—", label: "SIGNALS EXPRESSED" },
-        { value: "128", label: "BEHAVIORAL DIMENSIONS" },
-        { value: "—", label: "ACTIVE IDENTITIES" },
-        { value: "∞", label: "SCALE POTENTIAL" },
+        { value: "—", label: "DDI BINDS" },
+        { value: "—", label: "CLAIMS GRANTED" },
+        { value: "—", label: "EV SURFACES" },
+        { value: "—", label: "PORTABLE IDENTITIES" },
+        { value: "L4", label: "MAX AUTONOMY TESTED" },
       ];
 
   return (

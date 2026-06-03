@@ -1,12 +1,12 @@
 import { z } from "zod";
 
 export const profileUpdateSchema = z.object({
-  seatConfig: z.record(z.unknown()).optional(),
-  mirrorConfig: z.record(z.unknown()).optional(),
-  climateConfig: z.record(z.unknown()).optional(),
-  infotainmentConfig: z.record(z.unknown()).optional(),
-  drivingMode: z.record(z.unknown()).optional(),
-  accessibility: z.record(z.unknown()).optional(),
+  credentials: z.record(z.unknown()).optional(),
+  authorization: z.record(z.unknown()).optional(),
+  autonomyPosture: z.record(z.unknown()).optional(),
+  compliance: z.record(z.unknown()).optional(),
+  operationalNeeds: z.record(z.unknown()).optional(),
+  energyProfile: z.record(z.unknown()).optional(),
 });
 
 export type ProfileUpdateInput = z.infer<typeof profileUpdateSchema>;

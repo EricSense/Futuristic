@@ -1,18 +1,23 @@
-export const PREFERENCE_CATEGORIES = [
-  "seat",
-  "mirrors",
-  "climate",
-  "infotainment",
-  "drivingMode",
-  "accessibility",
+/** DDI policy domains evaluated during a vehicle bind */
+export const DDI_DOMAINS = [
+  "credentials",
+  "authorization",
+  "autonomy",
+  "compliance",
+  "operational",
+  "energy",
 ] as const;
 
-export type PreferenceCategory = (typeof PREFERENCE_CATEGORIES)[number];
+export type DdiDomain = (typeof DDI_DOMAINS)[number];
+
+/** @deprecated use DDI_DOMAINS */
+export const PREFERENCE_CATEGORIES = DDI_DOMAINS;
+export type PreferenceCategory = DdiDomain;
 
 export const USER_ROLES = ["DRIVER", "OWNER", "FLEET_OPERATOR", "ADMIN"] as const;
 export type UserRole = (typeof USER_ROLES)[number];
 
-export interface SyncPlanItem {
+export interface BindClaim {
   category: string;
   key: string;
   requestedValue: unknown;
@@ -20,13 +25,24 @@ export interface SyncPlanItem {
   reason?: string;
 }
 
-export interface SyncPlan {
-  items: SyncPlanItem[];
+/** Bind manifest returned when DDI is presented to a vehicle surface */
+export interface BindManifest {
+  items: BindClaim[];
   summary: {
-    applied: number;
-    unsupported: number;
+    granted: number;
+    denied: number;
     skipped: number;
   };
+  message: string;
+  bindStatus: "authorized" | "partial" | "denied";
+}
+
+/** @deprecated use BindManifest */
+export interface SyncPlanItem extends BindClaim {}
+/** @deprecated use BindManifest */
+export interface SyncPlan {
+  items: BindClaim[];
+  summary: { applied: number; unsupported: number; skipped: number };
   message: string;
 }
 

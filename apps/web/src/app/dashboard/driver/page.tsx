@@ -2,7 +2,7 @@
 
 export const dynamic = "force-dynamic";
 
-import { DDI_LAYER_EDITOR, type DdiProfileField } from "@futuristic/shared";
+import { DDI_LAYER_EDITOR, formatBindClaim, type DdiProfileField } from "@futuristic/shared";
 import { useEffect, useState } from "react";
 import { DdiStack } from "@/components/prototype/ddi-stack";
 import { DashboardNav, ProgressRing, StatCard } from "@/components/ui";
@@ -10,12 +10,12 @@ import { apiFetch } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 
 interface Profile {
-  seatConfig: Record<string, unknown>;
-  mirrorConfig: Record<string, unknown>;
-  climateConfig: Record<string, unknown>;
-  infotainmentConfig: Record<string, unknown>;
-  drivingMode: Record<string, unknown>;
-  accessibility: Record<string, unknown>;
+  credentials: Record<string, unknown>;
+  authorization: Record<string, unknown>;
+  autonomyPosture: Record<string, unknown>;
+  compliance: Record<string, unknown>;
+  operationalNeeds: Record<string, unknown>;
+  energyProfile: Record<string, unknown>;
   completeness: { percent: number; filled: string[]; missing: string[] };
 }
 
@@ -28,21 +28,36 @@ interface RecognitionSurface {
   owner: { name: string };
 }
 
-interface RecognitionEvent {
+interface BindEvent {
   id: string;
   status: string;
   startedAt: string;
-  syncPlan?: { summary?: { applied: number; unsupported: number } };
+  syncPlan?: { bindStatus?: string; summary?: { applied: number; unsupported: number } };
   vehicle: { make: string; model: string; year: number };
 }
 
-interface RecognitionResult {
-  session: RecognitionEvent;
+interface BindResult {
+  session: BindEvent;
   plan: {
+    bindStatus?: string;
     items: { category: string; key: string; applied: boolean; reason?: string }[];
     summary: { applied: number; unsupported: number };
     message: string;
   };
+}
+
+function parseFieldValue(raw: string, type?: string): unknown {
+  if (type === "boolean") return raw === "true";
+  if (type === "select" || type === "text") return raw;
+  const num = Number(raw);
+  return isNaN(num) ? raw : num;
+}
+
+function serializeFieldValue(value: unknown, fieldName: string): string {
+  if (Array.isArray(value)) return value.join(", ");
+  if (fieldName === "fleetMemberships" && typeof value === "string") return value;
+  if (typeof value === "boolean") return value ? "true" : "false";
+  return String(value ?? "");
 }
 
 export default function DriverDashboard() {
@@ -51,8 +66,8 @@ export default function DriverDashboard() {
   const [ddi, setDdi] = useState<Profile | null>(null);
   const [loadError, setLoadError] = useState("");
   const [surfaces, setSurfaces] = useState<RecognitionSurface[]>([]);
-  const [events, setEvents] = useState<RecognitionEvent[]>([]);
-  const [recognition, setRecognition] = useState<RecognitionResult | null>(null);
+  const [events, setEvents] = useState<BindEvent[]>([]);
+  const [bindResult, setBindResult] = useState<BindResult | null>(null);
   const [activeLayerId, setActiveLayerId] = useState(DDI_LAYER_EDITOR[0]!.id);
   const [activeDomain, setActiveDomain] = useState(DDI_LAYER_EDITOR[0]!.domains[0]!.profileField);
   const [saving, setSaving] = useState(false);
@@ -74,7 +89,7 @@ export default function DriverDashboard() {
         const [profile, available, sessions] = await Promise.all([
           apiFetch<Profile>("/profile", { token }),
           apiFetch<RecognitionSurface[]>("/vehicles/available", { token }),
-          apiFetch<RecognitionEvent[]>("/sync/sessions", { token }),
+          apiFetch<BindEvent[]>("/sync/sessions", { token }),
         ]);
         if (cancelled) return;
         setDdi(profile);
@@ -90,17 +105,26 @@ export default function DriverDashboard() {
     };
   }, [getToken, getUser, logout]);
 
-  async function saveLayerSignals() {
+  async function saveLayer() {
     if (!ddi) return;
     setSaving(true);
     try {
       const token = getToken();
+      const section = { ...(ddi[activeDomain as keyof Profile] as Record<string, unknown>) };
+      if (section.fleetMemberships !== undefined) {
+        section.fleetMemberships = String(section.fleetMemberships)
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean);
+      }
+      if (section.restrictions !== undefined) {
+        const r = String(section.restrictions).trim();
+        section.restrictions = r ? r.split(",").map((s) => s.trim()) : [];
+      }
       const updated = await apiFetch<Profile>("/profile", {
         method: "PATCH",
         token,
-        body: JSON.stringify({
-          [activeDomain]: ddi[activeDomain as keyof Profile],
-        }),
+        body: JSON.stringify({ [activeDomain]: section }),
       });
       setDdi(updated);
     } finally {
@@ -108,9 +132,9 @@ export default function DriverDashboard() {
     }
   }
 
-  async function expressIdentity(surfaceId: string) {
+  async function bindToSurface(surfaceId: string) {
     const token = getToken();
-    const result = await apiFetch<RecognitionResult>("/sync/start", {
+    const result = await apiFetch<BindResult>("/sync/start", {
       method: "POST",
       token,
       body: JSON.stringify({ vehicleId: surfaceId }),
@@ -119,18 +143,18 @@ export default function DriverDashboard() {
       method: "POST",
       token,
     });
-    setRecognition(result);
-    const sessions = await apiFetch<RecognitionEvent[]>("/sync/sessions", { token });
+    setBindResult(result);
+    const sessions = await apiFetch<BindEvent[]>("/sync/sessions", { token });
     setEvents(sessions);
   }
 
-  function updateSignal(field: string, value: string) {
+  function updateField(field: string, value: string) {
     if (!ddi) return;
     const current = (ddi[activeDomain as keyof Profile] as Record<string, unknown>) ?? {};
-    const num = Number(value);
+    const fieldDef = domainEditor.fields.find((f) => f.name === field);
     setDdi({
       ...ddi,
-      [activeDomain]: { ...current, [field]: isNaN(num) ? value : num },
+      [activeDomain]: { ...current, [field]: parseFieldValue(value, fieldDef?.type) },
     });
   }
 
@@ -155,13 +179,13 @@ export default function DriverDashboard() {
             </button>
           </div>
         ) : (
-          "Initializing Digital Driving Identity…"
+          "Loading portable Digital Driving Identity…"
         )}
       </div>
     );
   }
 
-  const signals = (ddi[activeDomain as DdiProfileField] as Record<string, unknown>) ?? {};
+  const fields = (ddi[activeDomain as DdiProfileField] as Record<string, unknown>) ?? {};
 
   return (
     <div className="min-h-screen bg-void">
@@ -172,8 +196,8 @@ export default function DriverDashboard() {
             <p className="label">Digital Driving Identity</p>
             <h1 className="font-display text-3xl font-bold">{user?.name ?? "Driver"}</h1>
             <p className="mt-1 max-w-xl text-muted">
-              One portable identity. Any recognition surface. Your living signature — not settings
-              inside a car.
+              Portable identity infrastructure — credentials, authorization, autonomy contract, and
+              EV profile that travels with you across any vehicle or fleet.
             </p>
           </div>
           <ProgressRing percent={ddi.completeness.percent} />
@@ -181,8 +205,8 @@ export default function DriverDashboard() {
 
         <div className="mt-10 grid gap-4 sm:grid-cols-3">
           <StatCard label="DDI complete" value={`${ddi.completeness.percent}%`} accent />
-          <StatCard label="Recognition surfaces" value={surfaces.length} />
-          <StatCard label="Recognition events" value={events.length} />
+          <StatCard label="EV surfaces" value={surfaces.length} />
+          <StatCard label="DDI binds" value={events.length} />
         </div>
 
         <div className="mt-8">
@@ -208,10 +232,8 @@ export default function DriverDashboard() {
 
         <div className="mt-10 grid gap-8 lg:grid-cols-2">
           <div className="card">
-            <h2 className="font-display text-lg font-bold">Identity stack editor</h2>
-            <p className="mt-1 text-sm text-muted">
-              Compose signals for {activeLayer.name.toLowerCase()}
-            </p>
+            <h2 className="font-display text-lg font-bold">DDI editor</h2>
+            <p className="mt-1 text-sm text-muted">Configure {activeLayer.name.toLowerCase()}</p>
             <div className="mt-4 flex flex-wrap gap-2">
               {activeLayer.domains.map((d) => (
                 <button
@@ -232,63 +254,110 @@ export default function DriverDashboard() {
               {domainEditor.fields.map((field) => (
                 <div key={field.name}>
                   <label className="label">{field.label}</label>
-                  <input
-                    className="input"
-                    value={String(signals[field.name] ?? "")}
-                    onChange={(e) => updateSignal(field.name, e.target.value)}
-                  />
+                  {field.type === "boolean" ? (
+                    <select
+                      className="input"
+                      value={serializeFieldValue(fields[field.name], field.name)}
+                      onChange={(e) => updateField(field.name, e.target.value)}
+                    >
+                      <option value="true">Yes</option>
+                      <option value="false">No</option>
+                    </select>
+                  ) : field.type === "select" && field.name === "licenseClass" ? (
+                    <select
+                      className="input"
+                      value={serializeFieldValue(fields[field.name], field.name)}
+                      onChange={(e) => updateField(field.name, e.target.value)}
+                    >
+                      {["C", "B", "A"].map((v) => (
+                        <option key={v} value={v}>
+                          Class {v}
+                        </option>
+                      ))}
+                    </select>
+                  ) : field.type === "select" && field.name === "maxAutonomyLevel" ? (
+                    <select
+                      className="input"
+                      value={serializeFieldValue(fields[field.name], field.name)}
+                      onChange={(e) => updateField(field.name, e.target.value)}
+                    >
+                      {["L0", "L1", "L2", "L3", "L4"].map((v) => (
+                        <option key={v} value={v}>
+                          {v}
+                        </option>
+                      ))}
+                    </select>
+                  ) : field.type === "select" && field.name === "preferredConnector" ? (
+                    <select
+                      className="input"
+                      value={serializeFieldValue(fields[field.name], field.name)}
+                      onChange={(e) => updateField(field.name, e.target.value)}
+                    >
+                      {["NACS", "CCS", "CHAdeMO"].map((v) => (
+                        <option key={v} value={v}>
+                          {v}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      className="input"
+                      value={serializeFieldValue(fields[field.name], field.name)}
+                      onChange={(e) => updateField(field.name, e.target.value)}
+                    />
+                  )}
                 </div>
               ))}
             </div>
-            <button onClick={saveLayerSignals} disabled={saving} className="btn-primary mt-4">
-              {saving ? "Saving…" : "Save identity signals"}
+            <button onClick={saveLayer} disabled={saving} className="btn-primary mt-4">
+              {saving ? "Saving…" : "Save DDI"}
             </button>
           </div>
 
           <div className="card">
-            <h2 className="font-display text-lg font-bold">Identity recognition</h2>
+            <h2 className="font-display text-lg font-bold">Bind to EV surface</h2>
             <p className="mt-1 text-sm text-muted">
-              Express your DDI on a recognition surface — the runtime maps signals to what the
-              environment can honor
+              Present your portable DDI to a vehicle — the bind runtime validates credentials,
+              authorization, autonomy, compliance, and energy claims
             </p>
             <div className="mt-4 space-y-2">
               {surfaces.map((s) => (
                 <button
                   key={s.id}
                   type="button"
-                  onClick={() => expressIdentity(s.id)}
+                  onClick={() => bindToSurface(s.id)}
                   className="flex w-full items-center justify-between rounded-xl border border-border bg-surface px-4 py-3 text-left transition hover:border-glow/40"
                 >
                   <div>
                     <p className="font-medium">
                       {s.year} {s.make} {s.model}
                     </p>
-                    <p className="text-xs text-muted">Surface operator: {s.owner.name}</p>
+                    <p className="text-xs text-muted">Operator: {s.owner.name}</p>
                   </div>
-                  <span className="text-sm text-accent">Recognize →</span>
+                  <span className="text-sm text-accent">Bind DDI →</span>
                 </button>
               ))}
               {surfaces.length === 0 && (
-                <p className="py-6 text-center text-sm text-muted">
-                  No recognition surfaces available yet.
-                </p>
+                <p className="py-6 text-center text-sm text-muted">No EV surfaces available.</p>
               )}
             </div>
 
-            {recognition && (
+            {bindResult && (
               <div className="mt-6 rounded-xl border border-glow/30 bg-glow/5 p-4">
-                <p className="text-sm font-medium text-accent">{recognition.plan.message}</p>
+                <p className="text-sm font-medium text-accent">{bindResult.plan.message}</p>
                 <p className="mt-2 text-xs text-muted">
-                  {recognition.plan.summary.applied} signals expressed ·{" "}
-                  {recognition.plan.summary.unsupported} deferred
+                  {bindResult.plan.summary.applied} granted · {bindResult.plan.summary.unsupported}{" "}
+                  denied
+                  {bindResult.plan.bindStatus && ` · ${bindResult.plan.bindStatus}`}
                 </p>
                 <div className="mt-3 max-h-48 space-y-1 overflow-y-auto font-mono text-xs">
-                  {recognition.plan.items.map((item, i) => (
+                  {bindResult.plan.items.map((item, i) => (
                     <div
                       key={i}
-                      className={item.applied ? "text-accent" : "text-amber-400/80"}
+                      className={item.applied ? "text-emerald-400" : "text-amber-400/80"}
                     >
-                      {item.category}.{item.key} → {item.applied ? "expressed" : item.reason}
+                      {formatBindClaim(item.category, item.key)} →{" "}
+                      {item.applied ? "granted" : item.reason ?? "denied"}
                     </div>
                   ))}
                 </div>
@@ -299,8 +368,8 @@ export default function DriverDashboard() {
 
         {events.length > 0 && (
           <div className="card mt-8">
-            <h2 className="font-display text-lg font-bold">Recognition log</h2>
-            <p className="mt-1 text-sm text-muted">Where your DDI was recognized</p>
+            <h2 className="font-display text-lg font-bold">Bind history</h2>
+            <p className="mt-1 text-sm text-muted">Where your portable DDI was presented</p>
             <div className="mt-4 divide-y divide-border">
               {events.map((e) => (
                 <div key={e.id} className="flex justify-between py-3 text-sm">

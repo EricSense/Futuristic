@@ -1,16 +1,7 @@
 import { prisma, Prisma } from "@futuristic/db";
 import type { ProfileUpdateInput, ProfileCompleteness } from "@futuristic/shared";
-import { PREFERENCE_CATEGORIES } from "@futuristic/shared";
+import { DDI_DOMAINS, DDI_DOMAIN_TO_PROFILE } from "@futuristic/shared";
 import { AppError } from "../middleware/error-handler.js";
-
-const CATEGORY_FIELDS = {
-  seat: "seatConfig",
-  mirrors: "mirrorConfig",
-  climate: "climateConfig",
-  infotainment: "infotainmentConfig",
-  drivingMode: "drivingMode",
-  accessibility: "accessibility",
-} as const;
 
 function isFilled(value: unknown): boolean {
   return value !== null && value !== undefined && typeof value === "object" && Object.keys(value as object).length > 0;
@@ -20,14 +11,14 @@ export function computeCompleteness(profile: Record<string, unknown>): ProfileCo
   const filled: string[] = [];
   const missing: string[] = [];
 
-  for (const cat of PREFERENCE_CATEGORIES) {
-    const field = CATEGORY_FIELDS[cat];
-    if (isFilled(profile[field])) filled.push(cat);
-    else missing.push(cat);
+  for (const domain of DDI_DOMAINS) {
+    const field = DDI_DOMAIN_TO_PROFILE[domain]!;
+    if (isFilled(profile[field])) filled.push(domain);
+    else missing.push(domain);
   }
 
   return {
-    percent: Math.round((filled.length / PREFERENCE_CATEGORIES.length) * 100),
+    percent: Math.round((filled.length / DDI_DOMAINS.length) * 100),
     filled,
     missing,
   };

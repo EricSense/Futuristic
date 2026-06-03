@@ -1,13 +1,37 @@
 import bcrypt from "bcryptjs";
-import { DEFAULT_VEHICLE_CAPABILITIES } from "@futuristic/shared";
+import {
+  BMW_I4_CAPABILITIES,
+  DEFAULT_VEHICLE_CAPABILITIES,
+  RIVIAN_CAPABILITIES,
+} from "@futuristic/shared";
 import { PrismaClient, UserRole, VehicleStatus } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const defaultCapabilities = DEFAULT_VEHICLE_CAPABILITIES.map((cap) => ({
-  category: cap.category,
-  supportedRange: cap.supportedRange,
-}));
+async function seedCapabilities(
+  vehicleId: string,
+  caps: readonly { category: string; supportedRange: unknown }[],
+  replace = false,
+) {
+  if (replace) {
+    await prisma.vehicleCapability.deleteMany({ where: { vehicleId } });
+  }
+  for (const cap of caps) {
+    const existing = await prisma.vehicleCapability.findFirst({
+      where: { vehicleId, category: cap.category },
+    });
+    if (existing) {
+      await prisma.vehicleCapability.update({
+        where: { id: existing.id },
+        data: { supportedRange: cap.supportedRange as object },
+      });
+    } else {
+      await prisma.vehicleCapability.create({
+        data: { vehicleId, category: cap.category, supportedRange: cap.supportedRange as object },
+      });
+    }
+  }
+}
 
 async function main() {
   const passwordHash = await bcrypt.hash("password123", 10);
@@ -20,15 +44,78 @@ async function main() {
       passwordHash,
       name: "Alex Rivera",
       role: UserRole.DRIVER,
-      driverProfile: {
-        create: {
-          seatConfig: { position: 72, lumbar: 6, height: 58, tilt: 12 },
-          mirrorConfig: { left: -8, right: 14, rearview: 2 },
-          climateConfig: { temp: 71, fan: 3, zones: { driver: 71, passenger: 68 } },
-          infotainmentConfig: { volume: 35, source: "bluetooth", presets: ["Morning Drive", "Focus"] },
-          drivingMode: { mode: "comfort", regen: "medium" },
-          accessibility: { laneKeep: true, adaptiveCruise: true, blindSpot: true, display: "standard" },
-        },
+    },
+  });
+
+  await prisma.driverProfile.upsert({
+    where: { userId: driver.id },
+    update: {
+      credentials: {
+        licenseClass: "C",
+        licenseVerified: true,
+        insuranceVerified: true,
+        evCertified: true,
+      },
+      authorization: {
+        fleetMemberships: ["seed-fleet-metro"],
+        accessTier: "fleet",
+        roamingEnabled: true,
+      },
+      autonomyPosture: {
+        maxAutonomyLevel: "L3",
+        handoffPolicy: "planned",
+        supervisedRequired: false,
+        geofenceMode: "standard",
+      },
+      compliance: {
+        safetyScore: 92,
+        trainingCurrent: true,
+        restrictions: [],
+      },
+      operationalNeeds: {
+        mobilityAid: "none",
+        sensoryMode: "standard",
+        emergencyContact: "+1-555-0100",
+      },
+      energyProfile: {
+        preferredConnector: "NACS",
+        targetSocPercent: 80,
+        publicChargingAllowed: true,
+      },
+    },
+    create: {
+      userId: driver.id,
+      credentials: {
+        licenseClass: "C",
+        licenseVerified: true,
+        insuranceVerified: true,
+        evCertified: true,
+      },
+      authorization: {
+        fleetMemberships: ["seed-fleet-metro"],
+        accessTier: "fleet",
+        roamingEnabled: true,
+      },
+      autonomyPosture: {
+        maxAutonomyLevel: "L3",
+        handoffPolicy: "planned",
+        supervisedRequired: false,
+        geofenceMode: "standard",
+      },
+      compliance: {
+        safetyScore: 92,
+        trainingCurrent: true,
+        restrictions: [],
+      },
+      operationalNeeds: {
+        mobilityAid: "none",
+        sensoryMode: "standard",
+        emergencyContact: "+1-555-0100",
+      },
+      energyProfile: {
+        preferredConnector: "NACS",
+        targetSocPercent: 80,
+        publicChargingAllowed: true,
       },
     },
   });
@@ -71,33 +158,47 @@ async function main() {
   });
 
   const vehicles = [
-    { make: "Tesla", model: "Model 3", year: 2024, vin: "5YJ3E1EA1PF000001" },
-    { make: "Rivian", model: "R1T", year: 2023, vin: "7FC1K2E58NG000002" },
-    { make: "BMW", model: "i4", year: 2024, vin: "WBA1AB2C34DE00003" },
+    {
+      make: "Tesla",
+      model: "Model 3",
+      year: 2024,
+      vin: "5YJ3E1EA1PF000001",
+      fleetId: fleet.id,
+      caps: DEFAULT_VEHICLE_CAPABILITIES,
+    },
+    {
+      make: "Rivian",
+      model: "R1T",
+      year: 2023,
+      vin: "7FC1K2E58NG000002",
+      fleetId: fleet.id,
+      caps: RIVIAN_CAPABILITIES,
+    },
+    {
+      make: "BMW",
+      model: "i4",
+      year: 2024,
+      vin: "WBA1AB2C34DE00003",
+      fleetId: undefined,
+      caps: BMW_I4_CAPABILITIES,
+    },
   ];
 
-  for (const [index, v] of vehicles.entries()) {
+  for (const v of vehicles) {
     const vehicle = await prisma.vehicle.upsert({
       where: { vin: v.vin },
-      update: {},
+      update: { fleetId: v.fleetId ?? null },
       create: {
-        ...v,
+        make: v.make,
+        model: v.model,
+        year: v.year,
+        vin: v.vin,
         ownerId: owner.id,
-        fleetId: index < 2 ? fleet.id : undefined,
+        fleetId: v.fleetId,
         status: VehicleStatus.ACTIVE,
       },
     });
-
-    for (const cap of defaultCapabilities) {
-      const existing = await prisma.vehicleCapability.findFirst({
-        where: { vehicleId: vehicle.id, category: cap.category },
-      });
-      if (!existing) {
-        await prisma.vehicleCapability.create({
-          data: { vehicleId: vehicle.id, ...cap },
-        });
-      }
-    }
+    await seedCapabilities(vehicle.id, v.caps, true);
   }
 
   const profile = await prisma.driverProfile.findUniqueOrThrow({
@@ -105,27 +206,47 @@ async function main() {
   });
   const vehicle = await prisma.vehicle.findFirstOrThrow({ where: { vin: "5YJ3E1EA1PF000001" } });
 
-  await prisma.syncSession.create({
-    data: {
-      driverProfileId: profile.id,
-      vehicleId: vehicle.id,
-      status: "COMPLETED",
-      syncPlan: {
-        applied: 14,
-        unsupported: 1,
-        skipped: 0,
-        message: "Identity synced — vehicle adapted to driver preferences",
-      },
-      endedAt: new Date(),
-      appliedPreferences: {
-        create: [
-          { category: "seat", key: "position", value: 72, applied: true },
-          { category: "climate", key: "temp", value: 71, applied: true },
-          { category: "drivingMode", key: "mode", value: "comfort", applied: true },
-        ],
-      },
-    },
+  const existingSession = await prisma.syncSession.findFirst({
+    where: { driverProfileId: profile.id, vehicleId: vehicle.id },
   });
+
+  if (!existingSession) {
+    await prisma.syncSession.create({
+      data: {
+        driverProfileId: profile.id,
+        vehicleId: vehicle.id,
+        status: "COMPLETED",
+        syncPlan: {
+          bindStatus: "authorized",
+          message: "DDI bind authorized — portable identity accepted on Metro EV Pool surface",
+          summary: { granted: 12, denied: 0, skipped: 0 },
+        },
+        endedAt: new Date(),
+        appliedPreferences: {
+          create: [
+            {
+              category: "credentials",
+              key: "licenseClass",
+              value: "C",
+              applied: true,
+            },
+            {
+              category: "authorization",
+              key: "fleetMembership",
+              value: "seed-fleet-metro",
+              applied: true,
+            },
+            {
+              category: "autonomy",
+              key: "maxAutonomyLevel",
+              value: "L3",
+              applied: true,
+            },
+          ],
+        },
+      },
+    });
+  }
 
   console.log("Seed complete:");
   console.log("  Driver:  alex@driver.futuristic / password123");

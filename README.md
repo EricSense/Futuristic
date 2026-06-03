@@ -1,36 +1,29 @@
 # Futuristic
 
-**Your Digital Driving Identity.** The car that knows you is the prototype for the world that knows you.
+**Portable Digital Driving Identity** — critical infrastructure for the EV and autonomous vehicle era.
 
-Futuristic is a TypeScript monorepo — a marketplace connecting drivers (portable digital identities), vehicle owners, and fleet operators through an intelligent sync engine.
+Futuristic is a TypeScript monorepo connecting drivers, vehicle owners, and fleet operators through a **DDI bind runtime**. Your identity travels with you: credentials, fleet authorization, autonomy contract, compliance posture, and EV energy profile — validated every time you enter a new vehicle.
 
 ## Vision
 
-Your Digital Driving Identity isn't a car feature — it's an early proof of concept for ambient identity. One profile. Any vehicle. Graceful degradation when capabilities differ. Today: driving. Tomorrow: everywhere context matters.
+As vehicles become shared, electric, and self-driving, drivers need a **portable identity layer** — not settings trapped inside one car. Futuristic validates who you are, what you're authorized to operate, and how you expect autonomy and charging to work — at bind time, on any surface.
 
 ## Stack
 
 - **Web** — Next.js 14, Tailwind CSS
 - **API** — Express, JWT auth, role-based access
 - **Database** — PostgreSQL + Prisma
-- **Shared** — Zod validators, TypeScript types
-- **Recognition runtime** — Maps DDI signals to surface capability domains
+- **Shared** — Zod validators, DDI domain types
+- **Bind runtime** — Validates portable DDI claims against EV surface policies
 
 ## Quick start
 
 ```bash
-# Install dependencies
 pnpm install
-
-# Start PostgreSQL + Redis
 docker compose up -d
-
-# Copy env and set up database
 cp .env.example .env
 pnpm db:push
 pnpm db:seed
-
-# Run dev servers (API on :4000, Web on :3000)
 pnpm dev
 ```
 
@@ -44,34 +37,22 @@ Open [http://localhost:3000](http://localhost:3000)
 | Owner | morgan@owner.futuristic | password123 |
 | Fleet | sam@fleet.futuristic | password123 |
 
-## Project structure
+## DDI domains
 
-```
-futuristic/
-  apps/
-    api/          Express REST API + sync engine
-    web/          Next.js landing + dashboards
-  packages/
-    db/           Prisma schema, migrations, seed
-    shared/       Zod validators, shared types
-  docker-compose.yml
-```
+| Layer | Domains | What it covers |
+|-------|---------|----------------|
+| Trust root | credentials, authorization | License, insurance, fleet membership, access tier |
+| Operating posture | autonomy, compliance | Autonomy level, handoff policy, safety score, training |
+| Infrastructure field | operational, energy | Mobility needs, charging connector, SOC targets |
 
 ## Core flows
 
-1. **Driver** — Compose a 3-layer Digital Driving Identity (ergonomic, behavioral, contextual)
-2. **Owner** — Register recognition surfaces and enable DDI signal domains
-3. **Fleet** — Operate identity recognition at scale across surface pools
-4. **Recognition** — Runtime expresses DDI signals on surfaces, logs events
+1. **Driver** — Compose portable DDI across three layers
+2. **Owner** — Register EV surfaces and configure policy domains
+3. **Fleet** — Operate DDI binds at scale across shared EV pools
+4. **Bind** — Present DDI to a vehicle; runtime grants or denies claims with audit trail
 
-## Deploy to Vercel
+## Deploy
 
-`Cannot GET /` means Vercel is serving the **Express API** instead of the **Next.js site**. Fix it in project settings:
-
-1. Open your Vercel project → **Settings** → **General**
-2. Set **Root Directory** to `apps/web`
-3. Set **Environment Variables**:
-   - `NEXT_PUBLIC_API_URL` = your deployed API URL (e.g. `https://your-api.railway.app`)
-4. Redeploy
-
-The web app includes `apps/web/vercel.json` with monorepo build commands. The API is a separate Node server — deploy `apps/api` to Railway, Render, or Fly with `DATABASE_URL` set, then point the web app at it.
+Web: `apps/web` on Vercel with `NEXT_PUBLIC_API_URL` pointing to the API.  
+API: repo root on Vercel (or Railway/Render) with `DATABASE_URL` set.
