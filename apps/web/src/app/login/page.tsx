@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { Nav } from "@/components/ui";
 import { API_URL, apiFetch, getDashboardPath, storeTokens, type AuthResponse } from "@/lib/api";
+
+export default function LoginPage() {
   const router = useRouter();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
