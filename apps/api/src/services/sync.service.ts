@@ -102,14 +102,14 @@ export function generateSyncPlan(
     summary: { applied, unsupported, skipped: 0 },
     message:
       applied > 0
-        ? `Identity synced — ${applied} preferences applied, ${unsupported} gracefully deferred`
-        : "No preferences could be applied to this vehicle",
+        ? `DDI recognized — ${applied} identity signals expressed, ${unsupported} deferred`
+        : "Recognition surface could not honor your DDI signals",
   };
 }
 
 export async function startSyncSession(driverUserId: string, vehicleId: string) {
   const profile = await prisma.driverProfile.findUnique({ where: { userId: driverUserId } });
-  if (!profile) throw new AppError(404, "Driver profile not found");
+  if (!profile) throw new AppError(404, "Digital Driving Identity not found");
 
   const vehicle = await prisma.vehicle.findUnique({
     where: { id: vehicleId },
@@ -153,7 +153,7 @@ export async function startSyncSession(driverUserId: string, vehicleId: string) 
 
 export async function completeSyncSession(sessionId: string, driverUserId: string) {
   const profile = await prisma.driverProfile.findUnique({ where: { userId: driverUserId } });
-  if (!profile) throw new AppError(404, "Driver profile not found");
+  if (!profile) throw new AppError(404, "Digital Driving Identity not found");
 
   const session = await prisma.syncSession.findFirst({
     where: { id: sessionId, driverProfileId: profile.id },

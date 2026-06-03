@@ -36,14 +36,14 @@ export function LiveProof() {
             <span>
               {item.category}.{item.key}
             </span>
-            <span>{String(item.value)} → applied</span>
+            <span>{String(item.value)} → expressed</span>
           </div>
         ))}
       </div>
       {status && (
         <p className="mt-6 text-xs text-muted">
-          {status.appliedPreferences} preferences applied across {status.completedSessions} completed
-          syncs · {status.vehicles} active vehicles
+          {status.appliedPreferences} identity signals across {status.completedSessions} recognition
+          events · {status.vehicles} active surfaces
         </p>
       )}
     </div>
@@ -62,15 +62,15 @@ export function LiveStats() {
 
   const stats = status
     ? [
-        { value: String(status.sessions), label: "SYNC SESSIONS" },
-        { value: String(status.appliedPreferences), label: "PREFS APPLIED" },
+        { value: String(status.sessions), label: "RECOGNITION EVENTS" },
+        { value: String(status.appliedPreferences), label: "SIGNALS EXPRESSED" },
         { value: "128", label: "BEHAVIORAL DIMENSIONS" },
         { value: `${status.drivers}`, label: "ACTIVE IDENTITIES" },
         { value: "∞", label: "SCALE POTENTIAL" },
       ]
     : [
-        { value: "—", label: "SYNC SESSIONS" },
-        { value: "—", label: "PREFS APPLIED" },
+        { value: "—", label: "RECOGNITION EVENTS" },
+        { value: "—", label: "SIGNALS EXPRESSED" },
         { value: "128", label: "BEHAVIORAL DIMENSIONS" },
         { value: "—", label: "ACTIVE IDENTITIES" },
         { value: "∞", label: "SCALE POTENTIAL" },

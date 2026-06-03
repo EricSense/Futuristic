@@ -14,7 +14,7 @@ Your Digital Driving Identity isn't a car feature — it's an early proof of con
 - **API** — Express, JWT auth, role-based access
 - **Database** — PostgreSQL + Prisma
 - **Shared** — Zod validators, TypeScript types
-- **Sync Engine** — Maps driver preferences to vehicle capabilities
+- **Recognition runtime** — Maps DDI signals to surface capability domains
 
 ## Quick start
 
@@ -59,10 +59,10 @@ futuristic/
 
 ## Core flows
 
-1. **Driver** — Build a 6-layer identity profile (seat, mirrors, climate, infotainment, driving mode, accessibility)
-2. **Owner** — Register vehicles and define capabilities
-3. **Fleet** — Manage vehicle pools, view sync analytics
-4. **Sync** — Engine matches preferences to capabilities, logs sessions
+1. **Driver** — Compose a 3-layer Digital Driving Identity (ergonomic, behavioral, contextual)
+2. **Owner** — Register recognition surfaces and enable DDI signal domains
+3. **Fleet** — Operate identity recognition at scale across surface pools
+4. **Recognition** — Runtime expresses DDI signals on surfaces, logs events
 
 ## Deploy to Vercel
 

@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { Nav } from "@/components/ui";
 import { API_URL, apiFetch, getDashboardPath, storeTokens, type AuthResponse } from "@/lib/api";
-
-export default function LoginPage() {
   const router = useRouter();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -72,6 +70,9 @@ export default function LoginPage() {
           <p className="font-medium text-zinc-400">Demo accounts</p>
           <p className="mt-2">alex@driver.futuristic · morgan@owner.futuristic · sam@fleet.futuristic</p>
           <p>Password: password123</p>
+          <Link href="/prototype" className="btn-primary mt-4 inline-flex w-full justify-center text-xs">
+            Run live prototype first
+          </Link>
         </div>
       </div>
     </div>

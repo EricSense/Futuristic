@@ -7,9 +7,9 @@ import { Nav } from "@/components/ui";
 import { API_URL, apiFetch, getRegisterPath, storeTokens, type AuthResponse } from "@/lib/api";
 
 const roles = [
-  { value: "DRIVER", label: "Driver", desc: "Build and sync your driving identity" },
-  { value: "OWNER", label: "Vehicle Owner", desc: "Register vehicles and capabilities" },
-  { value: "FLEET_OPERATOR", label: "Fleet Operator", desc: "Manage fleets and analytics" },
+  { value: "DRIVER", label: "Driver", desc: "Compose and carry your Digital Driving Identity" },
+  { value: "OWNER", label: "Surface operator", desc: "Register environments that recognize DDI" },
+  { value: "FLEET_OPERATOR", label: "Fleet operator", desc: "Run identity recognition at scale" },
 ] as const;
 
 function RegisterForm() {
@@ -47,7 +47,7 @@ function RegisterForm() {
 
   return (
     <div className="mx-auto max-w-md px-6 pt-32">
-      <h1 className="font-display text-3xl font-bold">Create your identity</h1>
+      <h1 className="font-display text-3xl font-bold">Create your DDI</h1>
       <p className="mt-2 text-muted">Choose your role in the identity marketplace</p>
 
       <div className="mt-6 grid gap-2">

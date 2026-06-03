@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { IDENTITY_LAYERS } from "@futuristic/shared";
-import { DemoVideo } from "@/components/landing/demo-video";
+import { InteractivePrototype } from "@/components/prototype/interactive-demo";
 import { LiveProof, LiveStats } from "@/components/landing/live-status";
 import { Marquee } from "@/components/landing/marquee";
 import { SystemNav } from "@/components/landing/system-nav";
@@ -22,7 +22,7 @@ const domains = [
     name: "VEHICLE",
     status: "PROVEN",
     statusClass: "text-emerald-400 border-emerald-400/30 bg-emerald-400/10",
-    desc: "DDI proven in automotive. Seat, climate, audio — all pre-configured to your living signature. No setup. Just recognition.",
+    desc: "DDI proven in automotive — the first recognition domain. Your living signature travels; environments adapt.",
   },
   {
     icon: "🏠",
@@ -90,8 +90,8 @@ export default function HomePage() {
               <Link href="/register" className="btn-primary tracking-wide">
                 EXPLORE THE SYSTEM
               </Link>
-              <a href="#demo" className="btn-ghost tracking-wide">
-                WATCH DEMO
+              <a href="#prototype" className="btn-ghost tracking-wide">
+                RUN PROTOTYPE
               </a>
             </div>
             <p className="mt-12 font-mono text-[10px] tracking-[0.2em] text-accent/80">
@@ -102,7 +102,7 @@ export default function HomePage() {
 
         <Marquee />
 
-        <DemoVideo />
+        <InteractivePrototype />
 
         {/* Architecture */}
         <section id="architecture" className="scroll-mt-24 border-b border-border/40 py-24">
@@ -227,15 +227,15 @@ export default function HomePage() {
                 <p className="font-mono text-[10px] tracking-[0.3em] text-muted">SYSTEM STATUS</p>
                 <h2 className="font-display mt-2 text-3xl font-bold">IDENTITY RUNTIME</h2>
                 <p className="mt-4 text-sm text-zinc-400">
-                  The sync engine maps driver preferences to vehicle capabilities — applying
-                  matches, gracefully deferring the rest. Live proof of ambient identity in
-                  automotive.
+                  The recognition runtime maps DDI signals to what each surface can honor — expressing
+                  identity where supported, deferring gracefully where not. Live proof of ambient
+                  identity in automotive.
                 </p>
                 <div className="mt-8">
                   <LiveProof />
                 </div>
                 <Link href="/register?role=DRIVER" className="btn-primary mt-8 inline-flex">
-                  Build your identity
+                  Initialize your DDI
                 </Link>
               </div>
 

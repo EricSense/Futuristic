@@ -57,7 +57,7 @@ export const IDENTITY_LAYERS = [
     name: "BEHAVIORAL MESH",
     mapsTo: ["climate", "infotainment", "drivingMode"],
     detail:
-      "Patterns of preference across climate, audio, and driving intent — your behavioral model compressed into portable config.",
+      "Behavioral signature — climate rhythm, ambient audio, movement intent. Your living model compressed into portable identity signals.",
   },
   {
     id: "LAYER_03",

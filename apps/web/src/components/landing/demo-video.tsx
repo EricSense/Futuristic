@@ -4,12 +4,12 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const SCENES = [
-  { t: 0, line: "→ Sign in as alex@driver.futuristic" },
-  { t: 1200, line: "✓ Digital Driving Identity loaded" },
-  { t: 2400, line: "→ Profile: seat · climate · mode · audio · assists" },
-  { t: 3600, line: "→ Select 2024 Tesla Model 3 — Sync" },
-  { t: 4800, line: "✓ 14 preferences applied to vehicle" },
-  { t: 6000, line: "✓ Session complete — identity portable" },
+  "→ Sign in — load Digital Driving Identity",
+  "✓ Layer 01 Ergonomic Core initialized",
+  "→ Layer 02 Behavioral Mesh · Layer 03 Contextual Field",
+  "→ Express DDI on recognition surface",
+  "✓ 14 identity signals recognized",
+  "✓ DDI portable — recognition event logged",
 ];
 
 export function DemoVideo() {
@@ -26,8 +26,6 @@ export function DemoVideo() {
     return () => window.clearInterval(interval);
   }, []);
 
-  const lines = SCENES.slice(0, visible + 1).map((s) => s.line);
-
   return (
     <section id="demo" className="scroll-mt-24 border-b border-border/40 py-24">
       <div className="mx-auto max-w-7xl px-6">
@@ -35,11 +33,11 @@ export function DemoVideo() {
           <div>
             <p className="font-mono text-[10px] tracking-[0.3em] text-muted">// DEMO</p>
             <h2 className="font-display mt-2 text-3xl font-bold md:text-4xl">
-              See identity sync in action
+              Digital Driving Identity — live demo
             </h2>
             <p className="mt-3 max-w-xl text-sm text-zinc-400">
-              Login → build preferences → sync to any vehicle. The driver dashboard is live on
-              production — try the demo account below.
+              Compose your three-layer DDI, express it on a recognition surface, and watch identity
+              signals propagate. Not car settings — portable identity infrastructure.
             </p>
           </div>
           <Link href="/login" className="btn-primary text-xs tracking-wide">
@@ -53,37 +51,37 @@ export function DemoVideo() {
             <span className="h-2.5 w-2.5 rounded-full bg-amber-400/80" />
             <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/80" />
             <span className="ml-2 font-mono text-[10px] tracking-wider text-muted">
-              futuristic — driver.sync.demo
+              futuristic — ddi.recognition.demo
             </span>
           </div>
 
           <div className="grid lg:grid-cols-2">
             <div className="border-b border-border/40 p-6 lg:border-b-0 lg:border-r">
-              <p className="font-mono text-[10px] tracking-wider text-accent">DRIVER DASHBOARD</p>
+              <p className="font-mono text-[10px] tracking-wider text-accent">DDI RUNTIME</p>
               <div className="mt-4 space-y-3">
                 <div className="rounded-lg border border-border/50 bg-surface/50 p-4">
-                  <p className="text-xs text-muted">Profile complete</p>
+                  <p className="text-xs text-muted">DDI complete</p>
                   <p className="font-display text-2xl font-bold text-accent">
                     {visible >= 2 ? "85%" : "—"}
                   </p>
                 </div>
                 <div className="rounded-lg border border-border/50 bg-surface/50 p-4">
-                  <p className="text-xs text-muted">Available vehicles</p>
+                  <p className="text-xs text-muted">Recognition surfaces</p>
                   <p className="font-display text-2xl font-bold">{visible >= 3 ? "3" : "—"}</p>
                 </div>
                 {visible >= 3 && (
                   <div className="rounded-lg border border-glow/30 bg-glow/5 p-4">
-                    <p className="text-sm font-medium">2024 Tesla Model 3</p>
-                    <p className="text-xs text-accent">Sync → applied</p>
+                    <p className="text-sm font-medium">Recognition surface · Model 3</p>
+                    <p className="text-xs text-accent">DDI expressed</p>
                   </div>
                 )}
               </div>
             </div>
 
             <div className="p-6 font-mono text-sm">
-              <p className="text-muted">$ futuristic demo --role=driver</p>
+              <p className="text-muted">$ futuristic ddi init --layers=3</p>
               <div className="mt-4 min-h-[140px] space-y-1.5">
-                {lines.map((line) => (
+                {SCENES.slice(0, visible + 1).map((line) => (
                   <p
                     key={line}
                     className={

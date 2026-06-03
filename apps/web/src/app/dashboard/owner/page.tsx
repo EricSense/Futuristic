@@ -92,22 +92,22 @@ export default function OwnerDashboard() {
         )}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="label">Vehicle Registry</p>
+            <p className="label">Recognition surface registry</p>
             <h1 className="font-display text-3xl font-bold">{user?.name ?? "Owner"}</h1>
             <p className="mt-1 text-muted">
-              Register vehicles and define what each can honor when identities sync
+              Register environments that can recognize Digital Driving Identities
             </p>
           </div>
           <button onClick={() => setShowForm(!showForm)} className="btn-primary">
-            {showForm ? "Cancel" : "Add vehicle"}
+            {showForm ? "Cancel" : "Register surface"}
           </button>
         </div>
 
         <div className="mt-10 grid gap-4 sm:grid-cols-3">
-          <StatCard label="Total vehicles" value={vehicles.length} accent />
-          <StatCard label="Active" value={activeCount} />
+          <StatCard label="Surfaces registered" value={vehicles.length} accent />
+          <StatCard label="Active surfaces" value={activeCount} />
           <StatCard
-            label="Capabilities defined"
+            label="DDI signal domains"
             value={vehicles.reduce((n, v) => n + v.capabilities.length, 0)}
           />
         </div>
@@ -132,7 +132,7 @@ export default function OwnerDashboard() {
             </div>
             <div className="sm:col-span-2">
               <button type="submit" className="btn-primary">
-                Register vehicle
+                Register recognition surface
               </button>
             </div>
           </form>
@@ -175,14 +175,14 @@ export default function OwnerDashboard() {
                   onClick={() => seedCapabilities(v.id)}
                   className="btn-ghost mt-4 text-xs"
                 >
-                  Seed default capabilities
+                  Enable DDI recognition
                 </button>
               )}
             </div>
           ))}
           {vehicles.length === 0 && (
             <p className="text-center text-muted py-12">
-              No vehicles registered yet. Add your first vehicle to join the identity marketplace.
+              No recognition surfaces yet. Register one to join the DDI marketplace.
             </p>
           )}
         </div>
