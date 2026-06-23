@@ -218,7 +218,7 @@ async function main() {
         status: "COMPLETED",
         syncPlan: {
           bindStatus: "authorized",
-          message: "DDI bind authorized — portable identity accepted on Metro EV Pool surface",
+          message: "Futuristic ID bind authorized — portable identity accepted on Metro EV Pool surface",
           summary: { granted: 12, denied: 0, skipped: 0 },
         },
         endedAt: new Date(),

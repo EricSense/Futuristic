@@ -1,4 +1,4 @@
-/** Default surface policies for EV / autonomous recognition surfaces */
+/** Default surface policies for EV / autonomous vehicle surfaces */
 export const DEFAULT_VEHICLE_CAPABILITIES = [
   {
     category: "credentials",

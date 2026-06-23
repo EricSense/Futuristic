@@ -22,36 +22,36 @@ const domains = [
     name: "VEHICLE",
     status: "PROVEN",
     statusClass: "text-emerald-400 border-emerald-400/30 bg-emerald-400/10",
-    desc: "DDI bind proven across EV surfaces — credentials, fleet auth, and autonomy contracts validated at scale.",
+    desc: "Identity binding proven across EV surfaces — credentials, fleet auth, and autonomy contracts validated at scale.",
   },
   {
     icon: "🏠",
     name: "HOME",
     status: "IN PROGRESS",
     statusClass: "text-accent border-accent/30 bg-accent/10",
-    desc: "Smart environments that recognize you at the threshold. No apps, no commands. Presence is the interface.",
+    desc: "Connected spaces that can verify access, safety, and intent before systems unlock or adapt.",
   },
   {
     icon: "🏙",
     name: "CITY",
     status: "QUEUED",
     statusClass: "text-muted border-border bg-surface",
-    desc: "Urban infrastructure shaped by citizen identity. Transit, commerce, civic access — frictionless by default.",
+    desc: "Mobility, transit, charging, and civic systems that understand portable authorization.",
   },
   {
     icon: "🌐",
     name: "WORLD",
     status: "QUEUED",
     statusClass: "text-muted border-border bg-surface",
-    desc: "The full vision. A single identity layer beneath every digital and physical system on Earth.",
+    desc: "The long arc: trusted identity that travels across vehicles, autonomous systems, and connected infrastructure.",
   },
 ];
 
 const principles = [
-  "Portable identity — one DDI, any vehicle or fleet",
+  "Portable identity — one trust layer across vehicles and fleets",
   "Bind-time validation of credentials and autonomy contract",
   "Graceful degradation when surface policies differ",
-  "Privacy-first, driver-controlled identity layer",
+  "Privacy-first, user-controlled identity layer",
   "Open protocol for OEMs, fleets, and mobility operators",
 ];
 
@@ -70,21 +70,21 @@ export default function HomePage() {
           />
           <div className="relative mx-auto max-w-7xl px-6">
             <p className="font-mono text-[10px] tracking-[0.3em] text-muted">
-              DIGITAL IDENTITY SYSTEM — V.2.0
+              PORTABLE IDENTITY INFRASTRUCTURE — V.2.0
             </p>
             <h1 className="font-display mt-6 max-w-5xl text-5xl font-bold leading-[0.95] tracking-tight md:text-8xl">
-              THE WORLD
+              IDENTITY
               <br />
               <span className="bg-gradient-to-r from-accent via-white to-glow bg-clip-text text-transparent">
-                THAT KNOWS
+                THAT MOVES
               </span>
               <br />
-              YOU
+              WITH YOU
             </h1>
             <p className="mt-8 max-w-2xl text-base leading-relaxed text-zinc-400 md:text-lg">
-              A portable Digital Driving Identity that travels with you across any vehicle — credentials,
-              authorization, autonomy contract, and EV profile validated at every bind. Critical
-              infrastructure as autonomous fleets and shared EVs proliferate.
+              Futuristic builds portable digital identity infrastructure for vehicles, autonomous
+              systems, and the connected world. The live prototype proves the vehicle layer:
+              credentials, authorization, autonomy contract, and EV profile validated at every bind.
             </p>
             <div className="mt-10 flex flex-wrap gap-4">
               <Link href="/register" className="btn-primary tracking-wide">
@@ -110,7 +110,9 @@ export default function HomePage() {
             <div className="flex flex-wrap items-end justify-between gap-4">
               <div>
                 <p className="font-mono text-[10px] tracking-[0.3em] text-muted">// ARCHITECTURE</p>
-                <h2 className="font-display mt-2 text-3xl font-bold md:text-4xl">Identity Stack</h2>
+                <h2 className="font-display mt-2 text-3xl font-bold md:text-4xl">
+                  Infrastructure Stack
+                </h2>
               </div>
               <span className="inline-flex items-center gap-2 rounded border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 font-mono text-[10px] tracking-wider text-emerald-400">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
@@ -158,20 +160,21 @@ export default function HomePage() {
               <div>
                 <p className="font-display text-5xl font-bold text-accent/90 md:text-7xl">∞</p>
                 <h2 className="font-display mt-4 text-3xl font-bold leading-tight md:text-5xl">
-                  GENUINELY PRESCIENT.
+                  PORTABLE IDENTITY
                   <br />
-                  THE CAR IS JUST
+                  FOR AUTONOMOUS
                   <br />
-                  THE BEGINNING.
+                  SYSTEMS.
                 </h2>
                 <p className="mt-6 text-zinc-400 leading-relaxed">
-                  Every surface becomes intelligent. Every threshold becomes a recognition event.
-                  The Digital Driving Identity is not a vertical product — it is the first validated
-                  instance of a horizontal identity layer that extends across every domain: home,
-                  city, commerce, healthcare, governance.
+                  Vehicles are the first high-stakes surface where portable identity becomes urgent.
+                  As fleets become electric, shared, and autonomous, every bind needs to answer:
+                  who is this person, what are they authorized to operate, and what system contract
+                  should the machine honor?
                 </p>
                 <p className="mt-4 text-zinc-400 leading-relaxed">
-                  The prototype always precedes the paradigm. We are building the prototype.
+                  Futuristic starts with vehicles because the requirements are concrete. The same
+                  infrastructure extends into autonomous systems and the connected world.
                 </p>
                 <div className="mt-8 flex flex-wrap gap-2 font-mono text-[10px] tracking-wider">
                   {["VEHICLE ✓", "HOME", "CITY", "WORLD"].map((d, i) => (
@@ -191,21 +194,21 @@ export default function HomePage() {
 
               <div className="card">
                 <p className="font-mono text-[10px] tracking-[0.3em] text-muted">
-                  PROTOTYPE LOGIC
+                  PRODUCT LOGIC
                 </p>
                 <h3 className="font-display mt-3 text-2xl font-bold">
-                  FROM VEHICLE
+                  VEHICLES
                   <br />
-                  TO WORLD
+                  ARE THE START
                 </h3>
                 <p className="mt-4 text-sm leading-relaxed text-zinc-400">
-                  As vehicles become shared, electric, and autonomous, drivers need a portable identity
-                  — not settings saved in one car. Futuristic validates license, fleet authorization,
-                  autonomy level, and charging profile every time you enter a new surface.
+                  Futuristic is infrastructure for portable identity, authorization, and machine
+                  policy. The vehicle prototype validates license,
+                  fleet membership, autonomy posture, compliance, and charging needs in real time.
                 </p>
                 <p className="mt-4 text-sm leading-relaxed text-zinc-400">
-                  FUTURISTIC isn&apos;t building cabin preferences. It&apos;s building the bind layer
-                  that makes cross-vehicle mobility work at fleet scale.
+                  That same pattern becomes infrastructure for autonomous systems: a portable,
+                  privacy-aware identity layer that connected environments can verify before they act.
                 </p>
                 <ul className="mt-6 space-y-2 border-t border-border/40 pt-6">
                   {principles.map((p) => (
@@ -228,26 +231,26 @@ export default function HomePage() {
                 <p className="font-mono text-[10px] tracking-[0.3em] text-muted">SYSTEM STATUS</p>
                 <h2 className="font-display mt-2 text-3xl font-bold">IDENTITY RUNTIME</h2>
                 <p className="mt-4 text-sm text-zinc-400">
-                  The bind runtime validates portable DDI claims against each EV surface&apos;s policy
+                  The bind runtime validates portable identity claims against each EV surface&apos;s policy
                   domains — granting authorization where aligned, denying with reason where not.
                 </p>
                 <div className="mt-8">
                   <LiveProof />
                 </div>
                 <Link href="/register?role=DRIVER" className="btn-primary mt-8 inline-flex">
-                  Initialize your DDI
+                  Create Futuristic ID
                 </Link>
               </div>
 
               <div className="terminal rounded-xl border border-border/60 bg-void p-6 font-mono text-sm leading-relaxed">
                 <p className="text-muted">
-                  <span className="text-accent">FUTURISTIC_DDI</span> — identity.runtime
+                  <span className="text-accent">FUTURISTIC_ID</span> — bind.runtime
                 </p>
-                <p className="mt-4 text-zinc-300">$ ddi init --scope=world</p>
+                <p className="mt-4 text-zinc-300">$ futuristic bind --surface=vehicle</p>
                 <p className="text-emerald-400">✓ Credentials layer loaded</p>
                 <p className="text-emerald-400">✓ Autonomy contract active</p>
                 <p className="text-emerald-400">✓ EV energy profile bound</p>
-                <p className="text-accent">→ Presenting DDI to recognition surface...</p>
+                <p className="text-accent">→ Presenting portable identity to autonomous surface...</p>
                 <p className="mt-4 text-zinc-500">
                   DOMAIN [ VEHICLE ] ........ <span className="text-emerald-400">PROVEN</span>
                 </p>
@@ -300,8 +303,8 @@ export default function HomePage() {
               Enter the identity layer
             </h2>
             <p className="mt-4 text-muted">
-              Driver, owner, or fleet operator — join the marketplace where identity meets
-              environment.
+              Driver, owner, or fleet operator — join the infrastructure layer for connected
+              mobility.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-4">
               <Link href="/register" className="btn-primary">

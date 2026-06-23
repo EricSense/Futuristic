@@ -189,7 +189,7 @@ function evaluateAutonomy(profile: ProfileRecord, range: PolicyRange | undefined
         "maxAutonomyLevel",
         requestedLevel,
         ok,
-        ok ? undefined : `Surface supports up to ${maxLevel} — DDI requests ${requestedLevel}`,
+        ok ? undefined : `Surface supports up to ${maxLevel} — identity requests ${requestedLevel}`,
       ),
     );
   }
@@ -415,11 +415,11 @@ export function generateBindManifest(
 
   let message: string;
   if (bindStatus === "authorized") {
-    message = `DDI bind authorized — portable identity accepted on this surface (${granted} claims granted)`;
+    message = `Futuristic ID bind authorized — portable identity accepted on this surface (${granted} claims granted)`;
   } else if (bindStatus === "partial") {
-    message = `DDI bind partial — ${granted} claims granted, ${denied} denied. Driver may operate with restrictions.`;
+    message = `Futuristic ID bind partial — ${granted} claims granted, ${denied} denied. Driver may operate with restrictions.`;
   } else {
-    message = "DDI bind denied — surface cannot honor this portable identity";
+    message = "Futuristic ID bind denied — surface cannot honor this portable identity";
   }
 
   return {
@@ -449,14 +449,14 @@ export function generateSyncPlan(
 
 export async function startSyncSession(driverUserId: string, vehicleId: string) {
   const profile = await prisma.driverProfile.findUnique({ where: { userId: driverUserId } });
-  if (!profile) throw new AppError(404, "Digital Driving Identity not found");
+  if (!profile) throw new AppError(404, "Portable Futuristic identity not found");
 
   const vehicle = await prisma.vehicle.findUnique({
     where: { id: vehicleId },
     include: { capabilities: true, fleet: true },
   });
   if (!vehicle) throw new AppError(404, "Vehicle not found");
-  if (vehicle.status !== "ACTIVE") throw new AppError(400, "Surface is not available for DDI bind");
+  if (vehicle.status !== "ACTIVE") throw new AppError(400, "Surface is not available for identity bind");
   if (vehicle.capabilities.length === 0) {
     throw new AppError(400, "Surface has no policy domains — owner must configure first");
   }
@@ -505,7 +505,7 @@ export async function startSyncSession(driverUserId: string, vehicleId: string) 
 
 export async function completeSyncSession(sessionId: string, driverUserId: string) {
   const profile = await prisma.driverProfile.findUnique({ where: { userId: driverUserId } });
-  if (!profile) throw new AppError(404, "Digital Driving Identity not found");
+  if (!profile) throw new AppError(404, "Portable Futuristic identity not found");
 
   const session = await prisma.syncSession.findFirst({
     where: { id: sessionId, driverProfileId: profile.id },

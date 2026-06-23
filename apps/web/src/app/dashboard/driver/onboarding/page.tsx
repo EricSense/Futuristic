@@ -69,14 +69,14 @@ export default function DriverOnboardingPage() {
           FUTURISTIC
         </Link>
         <p className="mt-8 font-mono text-[10px] tracking-[0.3em] text-muted">
-          DDI INITIALIZATION — LAYER {step + 1}/{DDI_ONBOARDING_STEPS.length}
+          FUTURISTIC ID SETUP — LAYER {step + 1}/{DDI_ONBOARDING_STEPS.length}
         </p>
         <h1 className="font-display mt-3 text-3xl font-bold">{current.name}</h1>
         <p className="mt-2 text-sm text-zinc-400">{current.detail}</p>
 
         <div className="mt-8 flex items-center gap-6">
           <ProgressRing percent={progress} />
-          <p className="text-sm text-muted">Composing your Digital Driving Identity</p>
+          <p className="text-sm text-muted">Composing your portable Futuristic identity</p>
         </div>
 
         <form onSubmit={handleNext} className="card mt-8 space-y-4">
@@ -96,7 +96,7 @@ export default function DriverOnboardingPage() {
               ? "Saving…"
               : step < DDI_ONBOARDING_STEPS.length - 1
                 ? "Next layer →"
-                : "Activate DDI"}
+                : "Activate identity"}
           </button>
         </form>
 

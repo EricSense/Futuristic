@@ -41,7 +41,7 @@ export function LiveProof() {
       </div>
       {status && (
         <p className="mt-6 text-xs text-muted">
-          {status.appliedPreferences} bind claims across {status.completedSessions} DDI binds ·{" "}
+          {status.appliedPreferences} bind claims across {status.completedSessions} identity binds ·{" "}
           {status.vehicles} EV surfaces
         </p>
       )}
@@ -61,14 +61,14 @@ export function LiveStats() {
 
   const stats = status
     ? [
-        { value: String(status.completedSessions), label: "DDI BINDS" },
+        { value: String(status.completedSessions), label: "IDENTITY BINDS" },
         { value: String(status.appliedPreferences), label: "CLAIMS GRANTED" },
         { value: String(status.vehicles), label: "EV SURFACES" },
         { value: `${status.drivers}`, label: "PORTABLE IDENTITIES" },
         { value: "L4", label: "MAX AUTONOMY TESTED" },
       ]
     : [
-        { value: "—", label: "DDI BINDS" },
+        { value: "—", label: "IDENTITY BINDS" },
         { value: "—", label: "CLAIMS GRANTED" },
         { value: "—", label: "EV SURFACES" },
         { value: "—", label: "PORTABLE IDENTITIES" },

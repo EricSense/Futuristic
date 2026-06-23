@@ -87,13 +87,13 @@ export function InteractivePrototype() {
       storeTokens(auth.accessToken, auth.refreshToken);
       localStorage.setItem("futuristic_user", JSON.stringify(auth.user));
       setToken(auth.accessToken);
-      push(`✓ DDI holder authenticated: ${auth.user.name}`);
+      push(`✓ Futuristic ID holder authenticated: ${auth.user.name}`);
 
       setStep("identity");
       push(`→ GET ${API_URL}/profile`);
       const p = await apiFetch<Profile>("/profile", { token: auth.accessToken });
       setProfile(p);
-      push(`✓ Portable DDI loaded (${p.completeness.percent}% complete)`);
+      push(`✓ Portable identity loaded (${p.completeness.percent}% complete)`);
       push(`  credentials: Class ${String((p.credentials as Record<string, unknown>).licenseClass ?? "?")} · verified`);
       push(`  autonomy: ${String((p.autonomyPosture as Record<string, unknown>).maxAutonomyLevel ?? "?")} · ${String((p.autonomyPosture as Record<string, unknown>).handoffPolicy ?? "?")} handoff`);
 
@@ -101,13 +101,13 @@ export function InteractivePrototype() {
       const list = await apiFetch<Surface[]>("/vehicles/available", {
         token: auth.accessToken,
       });
-      if (list.length === 0) throw new Error("No recognition surfaces available");
+      if (list.length === 0) throw new Error("No vehicle surfaces available");
       const surface = list[0]!;
       setSelectedSurface(surface);
       push(`✓ ${list.length} EV surface(s) — binding to ${surface.year} ${surface.make} ${surface.model}`);
 
       setStep("bind");
-      push(`→ POST ${API_URL}/sync/start  (DDI bind)`);
+      push(`→ POST ${API_URL}/sync/start  (vehicle bind)`);
       const bind = await apiFetch<BindResult>("/sync/start", {
         method: "POST",
         token: auth.accessToken,
@@ -139,10 +139,10 @@ export function InteractivePrototype() {
           <div>
             <p className="font-mono text-[10px] tracking-[0.3em] text-muted">// LIVE PROTOTYPE</p>
             <h2 className="font-display mt-2 text-3xl font-bold md:text-4xl">
-              Bind a portable DDI to an EV surface
+              Bind a Futuristic ID to an EV surface
             </h2>
             <p className="mt-3 max-w-2xl text-sm text-zinc-400">
-              One click presents Alex&apos;s Digital Driving Identity to a real vehicle — validating
+              One click presents Alex&apos;s portable identity to a real vehicle — validating
               credentials, fleet authorization, autonomy contract, compliance, and charging profile.
               This is identity infrastructure for the autonomous era, not cabin settings.
             </p>
@@ -153,7 +153,7 @@ export function InteractivePrototype() {
             disabled={running}
             className="btn-primary text-xs tracking-wide disabled:opacity-50"
           >
-            {running ? "Binding…" : "RUN DDI BIND"}
+            {running ? "Binding…" : "RUN VEHICLE BIND"}
           </button>
         </div>
 
@@ -208,7 +208,7 @@ export function InteractivePrototype() {
                     href={getDashboardPath("DRIVER")}
                     className="btn-ghost mt-4 inline-flex text-xs"
                   >
-                    Open full DDI dashboard →
+                    Open full identity dashboard →
                   </Link>
                 )}
               </div>
@@ -224,11 +224,11 @@ export function InteractivePrototype() {
 
           <div className="overflow-hidden rounded-2xl border border-border/60 bg-void font-mono text-sm">
             <div className="border-b border-border/40 bg-surface/80 px-4 py-2 text-[10px] tracking-wider text-muted">
-              ddi.bind.runtime — live output
+              futuristic.bind.runtime — live output
             </div>
             <div className="min-h-[320px] space-y-1.5 p-4">
               {log.length === 0 && (
-                <p className="text-muted">Press RUN DDI BIND to execute against {API_URL}</p>
+                <p className="text-muted">Press RUN VEHICLE BIND to execute against {API_URL}</p>
               )}
               {log.map((line, i) => (
                 <p
@@ -252,7 +252,7 @@ export function InteractivePrototype() {
         </div>
 
         <p className="mt-6 text-center font-mono text-[11px] text-muted">
-          Demo DDI: {DEMO.email} · Try Rivian (L2 cap) vs BMW i4 (L4) for different bind outcomes ·{" "}
+          Demo identity: {DEMO.email} · Try Rivian (L2 cap) vs BMW i4 (L4) for different bind outcomes ·{" "}
           <Link href="/login" className="text-accent hover:underline">
             sign in
           </Link>

@@ -97,7 +97,7 @@ export default function DriverDashboard() {
         setEvents(sessions);
       } catch (err) {
         if (cancelled) return;
-        setLoadError(err instanceof Error ? err.message : "Failed to load DDI");
+        setLoadError(err instanceof Error ? err.message : "Failed to load portable identity");
       }
     })();
     return () => {
@@ -169,7 +169,7 @@ export default function DriverDashboard() {
       <div className="flex min-h-screen items-center justify-center text-muted">
         {loadError ? (
           <div className="max-w-md space-y-3 rounded-xl border border-border bg-surface p-6 text-center">
-            <p className="font-medium text-red-300">Couldn&apos;t load your DDI</p>
+            <p className="font-medium text-red-300">Couldn&apos;t load your portable identity</p>
             <p className="text-sm text-muted">{loadError}</p>
             <button className="btn-primary w-full" onClick={() => window.location.reload()}>
               Retry
@@ -179,7 +179,7 @@ export default function DriverDashboard() {
             </button>
           </div>
         ) : (
-          "Loading portable Digital Driving Identity…"
+          "Loading portable Futuristic identity…"
         )}
       </div>
     );
@@ -193,7 +193,7 @@ export default function DriverDashboard() {
       <div className="mx-auto max-w-6xl px-6 py-10">
         <div className="flex flex-wrap items-start justify-between gap-6">
           <div>
-            <p className="label">Digital Driving Identity</p>
+            <p className="label">Portable Identity</p>
             <h1 className="font-display text-3xl font-bold">{user?.name ?? "Driver"}</h1>
             <p className="mt-1 max-w-xl text-muted">
               Portable identity infrastructure — credentials, authorization, autonomy contract, and
@@ -204,9 +204,9 @@ export default function DriverDashboard() {
         </div>
 
         <div className="mt-10 grid gap-4 sm:grid-cols-3">
-          <StatCard label="DDI complete" value={`${ddi.completeness.percent}%`} accent />
+          <StatCard label="Identity complete" value={`${ddi.completeness.percent}%`} accent />
           <StatCard label="EV surfaces" value={surfaces.length} />
-          <StatCard label="DDI binds" value={events.length} />
+          <StatCard label="Vehicle binds" value={events.length} />
         </div>
 
         <div className="mt-8">
@@ -232,7 +232,7 @@ export default function DriverDashboard() {
 
         <div className="mt-10 grid gap-8 lg:grid-cols-2">
           <div className="card">
-            <h2 className="font-display text-lg font-bold">DDI editor</h2>
+            <h2 className="font-display text-lg font-bold">Futuristic ID editor</h2>
             <p className="mt-1 text-sm text-muted">Configure {activeLayer.name.toLowerCase()}</p>
             <div className="mt-4 flex flex-wrap gap-2">
               {activeLayer.domains.map((d) => (
@@ -310,14 +310,14 @@ export default function DriverDashboard() {
               ))}
             </div>
             <button onClick={saveLayer} disabled={saving} className="btn-primary mt-4">
-              {saving ? "Saving…" : "Save DDI"}
+              {saving ? "Saving…" : "Save identity"}
             </button>
           </div>
 
           <div className="card">
             <h2 className="font-display text-lg font-bold">Bind to EV surface</h2>
             <p className="mt-1 text-sm text-muted">
-              Present your portable DDI to a vehicle — the bind runtime validates credentials,
+              Present your Futuristic ID to a vehicle — the bind runtime validates credentials,
               authorization, autonomy, compliance, and energy claims
             </p>
             <div className="mt-4 space-y-2">
@@ -334,7 +334,7 @@ export default function DriverDashboard() {
                     </p>
                     <p className="text-xs text-muted">Operator: {s.owner.name}</p>
                   </div>
-                  <span className="text-sm text-accent">Bind DDI →</span>
+                  <span className="text-sm text-accent">Bind identity →</span>
                 </button>
               ))}
               {surfaces.length === 0 && (
@@ -369,7 +369,7 @@ export default function DriverDashboard() {
         {events.length > 0 && (
           <div className="card mt-8">
             <h2 className="font-display text-lg font-bold">Bind history</h2>
-            <p className="mt-1 text-sm text-muted">Where your portable DDI was presented</p>
+            <p className="mt-1 text-sm text-muted">Where your portable identity was presented</p>
             <div className="mt-4 divide-y divide-border">
               {events.map((e) => (
                 <div key={e.id} className="flex justify-between py-3 text-sm">

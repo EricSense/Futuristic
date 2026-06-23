@@ -1,4 +1,4 @@
-/** DDI policy domains evaluated during a vehicle bind */
+/** Portable identity policy domains evaluated during a vehicle bind */
 export const DDI_DOMAINS = [
   "credentials",
   "authorization",
@@ -25,7 +25,7 @@ export interface BindClaim {
   reason?: string;
 }
 
-/** Bind manifest returned when DDI is presented to a vehicle surface */
+/** Bind manifest returned when portable identity is presented to a vehicle surface */
 export interface BindManifest {
   items: BindClaim[];
   summary: {

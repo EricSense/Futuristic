@@ -42,7 +42,7 @@ export function DashboardNav({
 }) {
   const links =
     role === "DRIVER"
-      ? [{ href: "/dashboard/driver", label: "My DDI" }]
+      ? [{ href: "/dashboard/driver", label: "My ID" }]
       : role === "OWNER"
         ? [{ href: "/dashboard/owner", label: "Surfaces" }]
         : [{ href: "/dashboard/fleet", label: "Operations" }];

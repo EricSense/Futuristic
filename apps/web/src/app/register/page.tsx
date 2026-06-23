@@ -7,9 +7,9 @@ import { Nav } from "@/components/ui";
 import { API_URL, apiFetch, getRegisterPath, storeTokens, type AuthResponse } from "@/lib/api";
 
 const roles = [
-  { value: "DRIVER", label: "Driver", desc: "Compose and carry your Digital Driving Identity" },
-  { value: "OWNER", label: "Surface operator", desc: "Register environments that recognize DDI" },
-  { value: "FLEET_OPERATOR", label: "Fleet operator", desc: "Run identity recognition at scale" },
+  { value: "DRIVER", label: "Identity holder", desc: "Carry verified identity across vehicles and systems" },
+  { value: "OWNER", label: "Surface operator", desc: "Register vehicles that validate portable identity" },
+  { value: "FLEET_OPERATOR", label: "Fleet operator", desc: "Run identity binds across shared mobility fleets" },
 ] as const;
 
 function RegisterForm() {
@@ -47,8 +47,8 @@ function RegisterForm() {
 
   return (
     <div className="mx-auto max-w-md px-6 pt-32">
-      <h1 className="font-display text-3xl font-bold">Create your DDI</h1>
-      <p className="mt-2 text-muted">Choose your role in the identity marketplace</p>
+      <h1 className="font-display text-3xl font-bold">Create your Futuristic ID</h1>
+      <p className="mt-2 text-muted">Choose your role in portable identity infrastructure</p>
 
       <div className="mt-6 grid gap-2">
         {roles.map((r) => (

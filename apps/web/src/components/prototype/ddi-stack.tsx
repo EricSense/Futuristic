@@ -11,7 +11,7 @@ export function DdiStack({ ddi, completeness }: { ddi: DdiData; completeness: nu
     <div className="card">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <p className="label">Portable DDI</p>
+          <p className="label">Futuristic ID</p>
           <p className="font-display text-lg font-bold">Travels with you across any vehicle</p>
         </div>
         <span className="font-display text-2xl font-bold text-accent">{completeness}%</span>

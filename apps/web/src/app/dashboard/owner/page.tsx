@@ -95,7 +95,7 @@ export default function OwnerDashboard() {
             <p className="label">EV surface registry</p>
             <h1 className="font-display text-3xl font-bold">{user?.name ?? "Owner"}</h1>
             <p className="mt-1 text-muted">
-              Register vehicles and configure policy domains for DDI bind validation
+              Register vehicles and configure policy domains for portable identity bind validation
             </p>
           </div>
           <button onClick={() => setShowForm(!showForm)} className="btn-primary">
@@ -132,7 +132,7 @@ export default function OwnerDashboard() {
             </div>
             <div className="sm:col-span-2">
               <button type="submit" className="btn-primary">
-                Register recognition surface
+                Register vehicle surface
               </button>
             </div>
           </form>
@@ -182,7 +182,7 @@ export default function OwnerDashboard() {
           ))}
           {vehicles.length === 0 && (
             <p className="text-center text-muted py-12">
-              No recognition surfaces yet. Register one to join the DDI marketplace.
+              No vehicle surfaces yet. Register one to join the Futuristic infrastructure layer.
             </p>
           )}
         </div>

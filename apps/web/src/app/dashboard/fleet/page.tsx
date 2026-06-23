@@ -114,10 +114,10 @@ export default function FleetDashboard() {
         )}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="label">DDI operations</p>
+            <p className="label">Bind operations</p>
             <h1 className="font-display text-3xl font-bold">{user?.name ?? "Operator"}</h1>
             <p className="mt-1 text-muted">
-              Identity at scale — recognition across every surface in your fleet
+              Portable identity at scale — vehicle binds across every surface in your fleet
             </p>
           </div>
           <button onClick={() => setShowForm(!showForm)} className="btn-primary">
@@ -128,8 +128,8 @@ export default function FleetDashboard() {
         {analytics && (
           <div className="mt-10 grid gap-4 sm:grid-cols-3">
             <StatCard label="Fleets" value={analytics.fleetCount} accent />
-            <StatCard label="Recognition surfaces" value={analytics.vehicleCount} />
-            <StatCard label="Recognition events" value={analytics.totalSessions} />
+            <StatCard label="Vehicle surfaces" value={analytics.vehicleCount} />
+            <StatCard label="Identity binds" value={analytics.totalSessions} />
           </div>
         )}
 
@@ -193,8 +193,8 @@ export default function FleetDashboard() {
 
         {analytics && analytics.recentSessions.length > 0 && (
           <div className="card mt-8">
-            <h2 className="font-display text-lg font-bold">Recognition log</h2>
-            <p className="mt-1 text-sm text-muted">DDI holders recognized on fleet surfaces</p>
+            <h2 className="font-display text-lg font-bold">Bind log</h2>
+            <p className="mt-1 text-sm text-muted">Futuristic ID holders bound to fleet surfaces</p>
             <div className="mt-4 divide-y divide-border">
               {analytics.recentSessions.map((s) => (
                 <div key={s.id} className="flex flex-wrap justify-between gap-2 py-3 text-sm">

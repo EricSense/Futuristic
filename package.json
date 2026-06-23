@@ -1,7 +1,7 @@
 {
   "name": "futuristic",
   "private": true,
-  "description": "Futuristic — Your Digital Driving Identity. The car that knows you is the prototype for the world that knows you.",
+  "description": "Futuristic builds portable digital identity infrastructure for vehicles, autonomous systems, and the connected world.",
   "license": "MIT",
   "type": "module",
   "scripts": {

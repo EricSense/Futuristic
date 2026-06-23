@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Futuristic — Your Digital Driving Identity",
+  title: "Futuristic — Portable Digital Identity Infrastructure",
   description:
-    "The car that knows you is the prototype for the world that knows you. Build your portable digital identity and sync it to any vehicle.",
+    "Futuristic builds portable digital identity infrastructure for vehicles, autonomous systems, and the connected world.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

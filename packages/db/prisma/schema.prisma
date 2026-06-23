@@ -50,7 +50,7 @@ model RefreshToken {
   createdAt DateTime @default(now())
 }
 
-/// Portable Digital Driving Identity — travels with the driver across vehicles
+/// Portable Futuristic identity — travels with the holder across vehicles and connected systems
 model DriverProfile {
   id               String        @id @default(uuid())
   userId           String        @unique
@@ -83,7 +83,7 @@ model Vehicle {
   syncSessions SyncSession[]
 }
 
-/// Surface policy domains the vehicle can honor during a DDI bind
+/// Surface policy domains the vehicle can honor during an identity bind
 model VehicleCapability {
   id             String  @id @default(uuid())
   vehicleId      String
@@ -110,7 +110,7 @@ model Fleet {
   vehicles   Vehicle[]
 }
 
-/// DDI bind session — portable identity presented to a recognition surface
+/// Identity bind session — portable identity presented to a vehicle surface
 model SyncSession {
   id                 String              @id @default(uuid())
   driverProfileId    String

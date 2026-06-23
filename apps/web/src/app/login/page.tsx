@@ -39,7 +39,10 @@ export default function LoginPage() {
       <Nav />
       <div className="mx-auto flex max-w-md flex-col px-6 pt-32">
         <h1 className="font-display text-3xl font-bold">Welcome back</h1>
-        <p className="mt-2 text-muted">Sign in to your Digital Driving Identity</p>
+        <p className="mt-2 text-muted">
+          Sign in to portable digital identity infrastructure for vehicles, autonomous systems,
+          and the connected world.
+        </p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">
           <div>
